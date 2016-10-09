@@ -2,6 +2,7 @@ package com.netcracker.edu.inventory.model.impl;
 
 import com.netcracker.edu.inventory.model.Device;
 import com.netcracker.edu.inventory.model.Rack;
+import com.netcracker.edu.inventory.service.impl.ServiceImpl;
 
 /**
  * Created by barmin on 07.10.2016.
@@ -24,6 +25,9 @@ public class RackArrayImpl implements Rack {
         /** String s2 = dev2.getType();*/
        int sizef = rack1.getSize();
         System.out.println(sizef);
+        ServiceImpl rt = new ServiceImpl();
+        Device[] yu = new Device[3];
+        rt.sortByIN(yu);
     }
 
     public RackArrayImpl(int size, String type) {
@@ -47,7 +51,7 @@ public class RackArrayImpl implements Rack {
     }
 
     public Device getDevAtSlot(int index){
-        if (index >= devices.length){
+        if (index >= devices.length && index < 0){
             System.err.println("Index is out of scope");
             return null;
         }
@@ -60,7 +64,7 @@ public class RackArrayImpl implements Rack {
 
     public boolean insertDevToSlot(Device device, int index){
 
-        if (index >= devices.length){
+        if (index >= devices.length && index < 0){
             System.err.println("Index is out of scope");
             return false;
         }
@@ -85,7 +89,7 @@ public class RackArrayImpl implements Rack {
     public Device removeDevFromSlot(int index){
         Device dt;
 
-        if (index >= devices.length){
+        if (index >= devices.length && index < 0){
             System.err.println("Index is out of scope");
             return null;
         }
