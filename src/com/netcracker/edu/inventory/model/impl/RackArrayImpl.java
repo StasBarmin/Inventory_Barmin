@@ -12,25 +12,7 @@ public class RackArrayImpl implements Rack {
     String type;
     Device devices [];
 
-    public static void main(String[] args) {
-        RackArrayImpl rack1 = new RackArrayImpl(5, "batar" );
-        Battery b1 = new Battery();
-        b1.setType("batar");
-        b1.setIn(33);
-        Switch s1 = new Switch();
-        s1.setType("batar");
-        s1.setIn(34);
-        boolean res = rack1.insertDevToSlot(b1, 3);
-        boolean res1 = rack1.insertDevToSlot(s1, 4);
-        /** String s2 = dev2.getType();*/
-       int sizef = rack1.getSize();
-        System.out.println(sizef);
-        ServiceImpl rt = new ServiceImpl();
-        Device[] yu = new Device[3];
-        rt.sortByIN(yu);
-    }
-
-    public RackArrayImpl(int size, String type) {
+       public RackArrayImpl(int size, String type) {
         this.size = size;
         this.type = type;
         devices = new Device [size];
@@ -51,7 +33,7 @@ public class RackArrayImpl implements Rack {
     }
 
     public Device getDevAtSlot(int index){
-        if (index >= devices.length && index < 0){
+        if (index >= devices.length || index < 0){
             System.err.println("Index is out of scope");
             return null;
         }
@@ -64,7 +46,7 @@ public class RackArrayImpl implements Rack {
 
     public boolean insertDevToSlot(Device device, int index){
 
-        if (index >= devices.length && index < 0){
+        if (index >= devices.length || index < 0){
             System.err.println("Index is out of scope");
             return false;
         }
@@ -89,7 +71,7 @@ public class RackArrayImpl implements Rack {
     public Device removeDevFromSlot(int index){
         Device dt;
 
-        if (index >= devices.length && index < 0){
+        if (index >= devices.length || index < 0){
             System.err.println("Index is out of scope");
             return null;
         }
