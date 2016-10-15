@@ -46,6 +46,9 @@ public class RackArrayImpl implements Rack {
 
     public boolean insertDevToSlot(Device device, int index){
 
+        if (device == null)
+            return false;
+
         if (index >= devices.length || index < 0){
             System.err.println("Index is out of scope");
             return false;
