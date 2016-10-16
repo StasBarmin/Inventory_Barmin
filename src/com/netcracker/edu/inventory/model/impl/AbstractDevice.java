@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Created by barmin on 07.10.2016.
  */
-abstract class AbstractDevice implements Device {
+public abstract class AbstractDevice implements Device {
     int in;
     String type;
     String manufacturer;

@@ -64,7 +64,7 @@ public class RackArrayImpl implements Rack {
 
             if (device == null) {
                 e = new DeviceValidationException();
-                LOGGER.log(Level.SEVERE, "Device is not valid for operation", e);
+                LOGGER.log(Level.SEVERE, "Device is not valid for operation. Rack.insertDevToSlot", e);
             }
                 else{
                 e = new DeviceValidationException("Device " + device + " is not valid for operation. Rack.insertDevToSlot");
