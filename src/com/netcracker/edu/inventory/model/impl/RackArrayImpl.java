@@ -89,14 +89,14 @@ public class RackArrayImpl implements Rack {
                     devices[index] = device;
                     return true;
                 } else {
-                    System.err.println("The rack can contain only devices type  " + type);
+                    LOGGER.log(Level.WARNING, "The rack can contain only devices type  " + type);
                     return false;
                 }
             }
         }
         else
         {
-            System.err.println("Slot is full");
+            LOGGER.log(Level.WARNING, "Slot is full");
             return false;
         }
     }
