@@ -9,14 +9,13 @@ import com.netcracker.edu.inventory.service.impl.ServiceImpl;
 public class Main {
 
     public static void main(String[] args) {
-        print(args);
-        System.out.println("--------------");
-        sort(args);
-        print(args);
+
 
         RackArrayImpl rack1 = new RackArrayImpl(5, "batar" );
         Battery b1 = new Battery();
+        String g = b1.getType();
         b1.setType("batar");
+        int f = b1.getIn();
         b1.setIn(33);
         Switch s1 = new Switch();
         s1.setType("batar");

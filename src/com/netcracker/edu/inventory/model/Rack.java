@@ -1,5 +1,7 @@
 package com.netcracker.edu.inventory.model;
 
+import com.netcracker.edu.inventory.exception.DeviceValidationException;
+
 /**
  * The interface Rack describe contract of mutable device-holder,
  * with limited volume of slots. Slots ara ordered and can fills and released randomly. *
@@ -35,7 +37,7 @@ public interface Rack {
      * @return true - if devicw was inserted
      *         false - if not
      */
-    boolean insertDevToSlot(Device device, int index);
+    boolean insertDevToSlot(Device device, int index) throws DeviceValidationException;
 
     /**
      * Remove device object from specified slot of rack
