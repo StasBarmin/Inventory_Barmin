@@ -3,16 +3,19 @@ package com.netcracker.edu.inventory.model.impl;
 import com.netcracker.edu.inventory.model.Device;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by barmin on 07.10.2016.
  */
 public abstract class AbstractDevice implements Device {
     int in;
-    String type;
+    final String type = this.getClass().getSimpleName();
     String manufacturer;
     String model;
     Date productionDate;
+    static protected Logger LOGGER = Logger.getLogger(RackArrayImpl.class.getName());
 
     @Override
     public int getIn() {
@@ -29,10 +32,10 @@ public abstract class AbstractDevice implements Device {
         return type;
     }
 
-    @Override
+    @Deprecated
     public void setType(String type) {
-        this.type = type;
-    }
+        LOGGER.log(Level.WARNING, "Method setType is out of date");
+           }
 
     @Override
     public String getManufacturer() {

@@ -12,22 +12,14 @@ import java.util.logging.Level;
  */
 public class RackArrayImpl implements Rack {
     int size;
+    @Deprecated
     String type;
     Device devices [];
     static protected Logger LOGGER = Logger.getLogger(RackArrayImpl.class.getName());
 
-       public RackArrayImpl(int size, String type) throws IllegalArgumentException {
-       if (size < 0) {
-           IllegalArgumentException  e = new IllegalArgumentException("Rack size should not be negative");
-           LOGGER.log(Level.SEVERE, "Rack size should not be negative", e);
-           throw e;
-       }
-       if (type == null){
-           LOGGER.log(Level.WARNING, "Device type for the rack set as null");
-       }
-        this.size = size;
-        this.type = type;
-        devices = new Device [size];
+        @Deprecated
+       public RackArrayImpl(int size, String type)  {
+            LOGGER.log(Level.WARNING, "This constructor is out of date");
     }
 
     public int getSize(){
@@ -129,6 +121,10 @@ public class RackArrayImpl implements Rack {
                 }
             }
         }
+        return null;
+    }
+
+    public Device[] getAllDeviceAsArray(){
         return null;
     }
 }
