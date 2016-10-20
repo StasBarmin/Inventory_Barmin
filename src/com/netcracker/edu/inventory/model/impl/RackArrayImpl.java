@@ -20,6 +20,7 @@ public class RackArrayImpl implements Rack {
 
         @Deprecated
         public RackArrayImpl(int size, String type)  {
+            clazz = Device.class;
             LOGGER.log(Level.WARNING, "This constructor is out of date");
                    }
 
