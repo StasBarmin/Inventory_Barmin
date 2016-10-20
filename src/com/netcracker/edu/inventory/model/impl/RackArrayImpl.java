@@ -3,26 +3,38 @@ package com.netcracker.edu.inventory.model.impl;
 import com.netcracker.edu.inventory.exception.DeviceValidationException;
 import com.netcracker.edu.inventory.model.Device;
 import com.netcracker.edu.inventory.model.Rack;
-import com.netcracker.edu.inventory.service.impl.ServiceImpl;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
 /**
  * Created by barmin on 07.10.2016.
  */
- class RackArrayImpl implements Rack {
+ public class RackArrayImpl implements Rack {
     int size;
     @Deprecated
     String type;
     final Class clazz;
     Device devices [];
     static protected Logger LOGGER = Logger.getLogger(RackArrayImpl.class.getName());
+    boolean cons1;
 
         @Deprecated
-        public RackArrayImpl(int size, String type)  {
-            clazz = Device.class;
-            LOGGER.log(Level.WARNING, "This constructor is out of date");
-                   }
+        public RackArrayImpl(int size, String type) throws IllegalArgumentException {
+        if (size < 0) {
+            IllegalArgumentException  e = new IllegalArgumentException("Rack size should not be negative");
+            LOGGER.log(Level.SEVERE, "Rack size should not be negative", e);
+            throw e;
+        }
+        if (type == null){
+            LOGGER.log(Level.WARNING, "Device type for the rack set as null");
+        }
+        this.size = size;
+        this.type = type;
+        devices = new Device [size];
+        clazz = Device.class;
+        cons1 = true;
+        LOGGER.log(Level.WARNING, "This constructor is out of date");
+    }
 
     public RackArrayImpl(int size, Class clazz) throws IllegalArgumentException {
         if (size < 0) {
@@ -38,6 +50,7 @@ import java.util.logging.Level;
         this.size = size;
         this.clazz = clazz;
         devices = new Device[size];
+        cons1 = false;
     }
 
     public int getSize(){
@@ -89,15 +102,26 @@ import java.util.logging.Level;
             throw e;
         }
 
-        if (devices[index] == null){
-            if (clazz.isInstance(device)) {
-                    devices[index] = device;
-                    return true;
-                } else {
-                    LOGGER.log(Level.WARNING, "The rack can contain only devices type  " + clazz.getSimpleName());
-                    return false;
-                }
+        if (devices[index] == null) {
+            if(cons1){
+                if (type.equals(device.getType())) {
+                devices[index] = device;
+                return true;
+            } else {
+                LOGGER.log(Level.WARNING, "The rack can contain only devices type  " + type);
+                return false;
             }
+            }
+            else {
+                if (clazz.isInstance(device)) {
+                devices[index] = device;
+                return true;
+            } else {
+                LOGGER.log(Level.WARNING, "The rack can contain only devices type  " + clazz.getSimpleName());
+                return false;
+            }
+            }
+        }
         else
         {
             LOGGER.log(Level.WARNING, "Slot is full");

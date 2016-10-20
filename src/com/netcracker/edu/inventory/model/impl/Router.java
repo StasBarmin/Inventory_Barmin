@@ -5,7 +5,7 @@ import com.netcracker.edu.inventory.model.Device;
 /**
  * Created by barmin on 07.10.2016.
  */
-class Router extends AbstractDevice implements Device {
+public class Router extends AbstractDevice implements Device {
     int dataRate;
 
     public int getDataRate() {

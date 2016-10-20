@@ -8,8 +8,12 @@ import com.netcracker.edu.inventory.service.DeviceService;
  */
  class DeviceServiceImpl implements DeviceService{
     public boolean isCastableTo(Device device, Class clazz){
-        if (clazz.isInstance(device))
-            return true;
+        if (clazz != null) {
+            if (clazz.isInstance(device))
+                return true;
+            else
+                return false;
+        }
         else
             return false;
     }

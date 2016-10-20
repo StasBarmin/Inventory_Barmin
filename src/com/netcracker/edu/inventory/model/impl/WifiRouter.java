@@ -5,7 +5,7 @@ import com.netcracker.edu.inventory.model.Device;
 /**
  * Created by barmin on 07.10.2016.
  */
- class WifiRouter extends Router implements Device {
+public class WifiRouter extends Router implements Device {
     String securityProtocol;
 
     public String getSecurityProtocol() {
