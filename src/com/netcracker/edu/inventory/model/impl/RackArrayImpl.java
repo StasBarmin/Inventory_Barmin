@@ -14,12 +14,29 @@ public class RackArrayImpl implements Rack {
     int size;
     @Deprecated
     String type;
+    final Class clazz;
     Device devices [];
     static protected Logger LOGGER = Logger.getLogger(RackArrayImpl.class.getName());
 
         @Deprecated
-       public RackArrayImpl(int size, String type)  {
+        public RackArrayImpl(int size, String type)  {
             LOGGER.log(Level.WARNING, "This constructor is out of date");
+                   }
+
+    public RackArrayImpl(int size, Class clazz) throws IllegalArgumentException {
+        if (size < 0) {
+            IllegalArgumentException e = new IllegalArgumentException("Rack size should not be negative");
+            LOGGER.log(Level.SEVERE, "Rack size should not be negative", e);
+            throw e;
+        }
+        if (clazz == null) {
+            IllegalArgumentException e = new IllegalArgumentException("Device type for the rack set as null");
+            LOGGER.log(Level.SEVERE, "Device type for the rack set as null");
+            throw e;
+        }
+        this.size = size;
+        this.clazz = clazz;
+        devices = new Device[size];
     }
 
     public int getSize(){
@@ -72,20 +89,14 @@ public class RackArrayImpl implements Rack {
         }
 
         if (devices[index] == null){
-            if (type == null){
-                devices[index] = device;
-                return true;
-            }
-            else {
-                if (type.equals(device.getType())) {
+            if (clazz.isInstance(device)) {
                     devices[index] = device;
                     return true;
                 } else {
-                    LOGGER.log(Level.WARNING, "The rack can contain only devices type  " + type);
+                    LOGGER.log(Level.WARNING, "The rack can contain only devices type  " + clazz.getSimpleName());
                     return false;
                 }
             }
-        }
         else
         {
             LOGGER.log(Level.WARNING, "Slot is full");
@@ -125,7 +136,25 @@ public class RackArrayImpl implements Rack {
     }
 
     public Device[] getAllDeviceAsArray(){
-        return null;
+        int counter = 0;
+
+        for (int i = 0; i < devices.length; i++){
+            if (devices[i] != null) {
+                counter++;
+            }
+        }
+
+        Device[] devs = new Device[counter];
+        counter = 0;
+
+        for (int i = 0; i < devices.length; i++){
+            if (devices[i] != null) {
+                devs[counter] = devices[i];
+                counter++;
+            }
+        }
+
+        return devs;
     }
 }
 

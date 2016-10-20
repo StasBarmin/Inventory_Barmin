@@ -1,6 +1,7 @@
 package com.netcracker.edu.inventory.service.impl;
 
 import com.netcracker.edu.inventory.model.Device;
+import com.netcracker.edu.inventory.service.DeviceService;
 import com.netcracker.edu.inventory.service.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -25,5 +26,9 @@ public class ServiceImpl implements Service   {
         LOGGER.log(Level.SEVERE, "Operation filtrateByType not supported yet", e);
         throw e;
 
+    }
+
+   public DeviceService getDeviceService(){
+        return null;
     }
 }
