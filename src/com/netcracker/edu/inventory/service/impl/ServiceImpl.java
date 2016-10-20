@@ -15,7 +15,7 @@ import static java.util.Arrays.fill;
 /**
  * Created by barmin on 09.10.2016.
  */
-public class ServiceImpl implements Service   {
+ class ServiceImpl implements Service   {
     static protected Logger LOGGER = Logger.getLogger(ServiceImpl.class.getName());
 
     public void sortByIN(Device[] devices)  {
@@ -66,6 +66,7 @@ public class ServiceImpl implements Service   {
     }
 
    public DeviceService getDeviceService(){
-        return null;
+       DeviceService ds = new DeviceServiceImpl();
+        return ds;
     }
 }

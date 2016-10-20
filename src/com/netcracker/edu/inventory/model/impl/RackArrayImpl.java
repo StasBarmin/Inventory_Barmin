@@ -10,7 +10,7 @@ import java.util.logging.Level;
 /**
  * Created by barmin on 07.10.2016.
  */
-public class RackArrayImpl implements Rack {
+ class RackArrayImpl implements Rack {
     int size;
     @Deprecated
     String type;

@@ -5,7 +5,7 @@ import com.netcracker.edu.inventory.model.Device;
 /**
  * Created by barmin on 07.10.2016.
  */
-public class Battery extends AbstractDevice implements Device {
+ class Battery extends AbstractDevice implements Device {
     int chargeVolume;
 
     public int getChargeVolume() {

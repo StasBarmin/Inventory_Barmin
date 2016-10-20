@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 /**
  * Created by barmin on 07.10.2016.
  */
-public abstract class AbstractDevice implements Device {
+ abstract class AbstractDevice implements Device {
     int in;
     final String type = this.getClass().getSimpleName();
     String manufacturer;
