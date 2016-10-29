@@ -1,13 +1,18 @@
 package com.netcracker.edu.main;
 
 import com.netcracker.edu.inventory.model.Device;
+import com.netcracker.edu.inventory.model.impl.Battery;
+
+import java.util.Date;
 
 
 public class Main {
 
     public static void main(String[] args) {
 
-
+    Device d = new Battery();
+       Date e = d.getProductionDate();
+        System.out.println(e);
 
     }
 

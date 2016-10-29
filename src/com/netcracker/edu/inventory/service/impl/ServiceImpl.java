@@ -2,6 +2,7 @@ package com.netcracker.edu.inventory.service.impl;
 
 import com.netcracker.edu.inventory.model.Device;
 import com.netcracker.edu.inventory.service.DeviceService;
+import com.netcracker.edu.inventory.service.RackService;
 import com.netcracker.edu.inventory.service.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -17,6 +18,16 @@ import static java.util.Arrays.fill;
  */
  public class ServiceImpl implements Service   {
     static protected Logger LOGGER = Logger.getLogger(ServiceImpl.class.getName());
+
+    public DeviceService getDeviceService(){
+        DeviceService ds = new DeviceServiceImpl();
+        return ds;
+    }
+
+    public RackService getRackService(){
+        RackService rs = new RackServiceImpl();
+        return rs;
+    }
 
     public void sortByIN(Device[] devices)  {
         boolean flag = true;
@@ -81,10 +92,5 @@ import static java.util.Arrays.fill;
                 }
             }
         }
-    }
-
-   public DeviceService getDeviceService(){
-       DeviceService ds = new DeviceServiceImpl();
-        return ds;
     }
 }

@@ -67,6 +67,10 @@ import java.util.logging.Level;
         return count;
     }
 
+    public Class getTypeOfDevices(){
+        return clazz;
+    }
+
     public Device getDevAtSlot(int index) throws IndexOutOfBoundsException{
         if (index >= devices.length || index < 0){
             IndexOutOfBoundsException e = new IndexOutOfBoundsException("Index " + index + " is out of bounds of array. Index should be from 0 to " + (devices.length - 1));
