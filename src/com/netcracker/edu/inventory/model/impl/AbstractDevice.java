@@ -24,7 +24,13 @@ import java.util.logging.Logger;
 
     @Override
     public void setIn(int in) {
+        if (in > 0)
         this.in = in;
+        else {
+            IllegalArgumentException e = new IllegalArgumentException("Inventory number should be greater than 0");
+            LOGGER.log(Level.SEVERE, "Inventory number should be greater than 0", e);
+            throw e;
+        }
     }
 
     @Override

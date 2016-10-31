@@ -6,6 +6,7 @@ import com.netcracker.edu.inventory.model.impl.Router;
 import com.netcracker.edu.inventory.model.impl.Switch;
 import com.netcracker.edu.inventory.model.impl.WifiRouter;
 import com.netcracker.edu.inventory.service.DeviceService;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
 import java.util.Date;
@@ -39,11 +40,16 @@ import java.util.logging.Logger;
     }
 
     public void writeDevice(Device device, Writer writer) throws IOException{
+        NotImplementedException e = new NotImplementedException();
+        LOGGER.log(Level.SEVERE, "Method is not implemented", e);
+        throw e;
 
     }
 
     public Device readDevice(Reader reader) throws IOException, ClassNotFoundException{
-        return null;
+        NotImplementedException e = new NotImplementedException();
+        LOGGER.log(Level.SEVERE, "Method is not implemented", e);
+        throw e;
     }
 
     public void outputDevice(Device device, OutputStream outputStream) throws IOException{
@@ -142,10 +148,14 @@ import java.util.logging.Logger;
     }
 
     public void serializeDevice(Device device, OutputStream outputStream) throws IOException{
-
+        NotImplementedException e = new NotImplementedException();
+        LOGGER.log(Level.SEVERE, "Method is not implemented", e);
+        throw e;
     }
 
     public Device deserializeDevice(InputStream inputStream) throws IOException, ClassCastException{
-        return null;
+        NotImplementedException e = new NotImplementedException();
+        LOGGER.log(Level.SEVERE, "Method is not implemented", e);
+        throw e;
     }
 }

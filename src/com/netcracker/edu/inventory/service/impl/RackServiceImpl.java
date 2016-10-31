@@ -4,6 +4,7 @@ import com.netcracker.edu.inventory.model.Device;
 import com.netcracker.edu.inventory.model.Rack;
 import com.netcracker.edu.inventory.model.impl.RackArrayImpl;
 import com.netcracker.edu.inventory.service.RackService;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
 import java.util.logging.Level;
@@ -16,11 +17,15 @@ class RackServiceImpl implements RackService{
     static protected Logger LOGGER = Logger.getLogger(RackServiceImpl.class.getName());
 
     public void writeRack(Rack rack, Writer writer) throws IOException{
-
+        NotImplementedException e = new NotImplementedException();
+        LOGGER.log(Level.SEVERE, "Method is not implemented", e);
+        throw e;
     }
 
     public Rack readRack(Reader reader) throws IOException{
-        return null;
+        NotImplementedException e = new NotImplementedException();
+        LOGGER.log(Level.SEVERE, "Method is not implemented", e);
+        throw e;
     }
 
     public void outputRack(Rack rack, OutputStream outputStream) throws IOException{
@@ -79,10 +84,14 @@ class RackServiceImpl implements RackService{
     }
 
     public void serializeRack(Rack rack, OutputStream outputStream) throws IOException{
-
+        NotImplementedException e = new NotImplementedException();
+        LOGGER.log(Level.SEVERE, "Method is not implemented", e);
+        throw e;
     }
 
     public Rack deserializeRack(InputStream inputStream) throws IOException, ClassCastException{
-        return null;
+        NotImplementedException e = new NotImplementedException();
+        LOGGER.log(Level.SEVERE, "Method is not implemented", e);
+        throw e;
     }
 }
