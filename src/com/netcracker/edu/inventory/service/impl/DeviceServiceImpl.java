@@ -98,6 +98,10 @@ import java.util.logging.Logger;
         DataInput dataInput = new DataInputStream(inputStream);
         Class c;
         String s = dataInput.readUTF();
+
+        if (s.equals("\n"))
+            return null;
+
         try {
              c =  Class.forName(s);
         } catch (ClassNotFoundException e){
