@@ -8,10 +8,11 @@ import com.netcracker.edu.inventory.model.impl.WifiRouter;
 import com.netcracker.edu.inventory.service.DeviceService;
 
 import java.io.*;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.lang.Class.forName;
+
 
 /**
  * Created by barmin on 20.10.2016.
@@ -45,7 +46,7 @@ import static java.lang.Class.forName;
         return null;
     }
 
-    public void outputDevice(Device device, OutputStream outputStream) throws IOException, IllegalArgumentException{
+    public void outputDevice(Device device, OutputStream outputStream) throws IOException{
         if (device == null)
            return ;
         if (outputStream == null) {
@@ -55,21 +56,17 @@ import static java.lang.Class.forName;
         }
 
         DataOutput dataOutput = new DataOutputStream(outputStream);
-
-        dataOutput.writeChars(device.getClass().getCanonicalName());
+        dataOutput.writeUTF(device.getClass().getCanonicalName());
         dataOutput.writeInt(device.getIn());
-        if (device.getType() == null)
-            dataOutput.writeChars("\n");
-        else
-            dataOutput.writeChars(device.getType());
+        dataOutput.writeUTF(device.getType());
         if (device.getModel() == null)
-            dataOutput.writeChars("\n");
+            dataOutput.writeUTF("\n");
         else
-            dataOutput.writeChars(device.getModel());
+            dataOutput.writeUTF(device.getModel());
         if (device.getManufacturer() == null)
-            dataOutput.writeChars("\n");
+            dataOutput.writeUTF("\n");
         else
-            dataOutput.writeChars(device.getManufacturer());
+            dataOutput.writeUTF(device.getManufacturer());
         if (device.getProductionDate() == null)
             dataOutput.writeLong(-1);
         else
@@ -80,9 +77,9 @@ import static java.lang.Class.forName;
                 dataOutput.writeInt(((Switch)device).getNumberOfPorts());
             if (WifiRouter.class.isInstance(device)){
                 if (((WifiRouter)device).getSecurityProtocol() == null)
-                    dataOutput.writeChars("\n");
+                    dataOutput.writeUTF("\n");
                 else
-                    dataOutput.writeChars(((WifiRouter)device).getSecurityProtocol());
+                    dataOutput.writeUTF(((WifiRouter)device).getSecurityProtocol());
             }
 
         }
@@ -92,9 +89,51 @@ import static java.lang.Class.forName;
     }
 
     public Device inputDevice(InputStream inputStream) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        if (inputStream == null) {
+            IllegalArgumentException e = new IllegalArgumentException("Missing input stream");
+            LOGGER.log(Level.SEVERE, "Missing input stream", e);
+            throw e;
+        }
+
         DataInput dataInput = new DataInputStream(inputStream);
-        Class c =  Class.forName(dataInput.readLine());
-        Device d = c.newInstance();
+        Class c;
+        String s = dataInput.readUTF();
+        try {
+             c =  Class.forName(s);
+        } catch (ClassNotFoundException e){
+            LOGGER.log(Level.SEVERE, "Class " + s + " was not found", e);
+            throw e;
+        }
+        Device d = (Device) c.newInstance();
+
+        d.setIn(dataInput.readInt());
+        dataInput.readUTF();
+        s = dataInput.readUTF();
+        if (!s.equals("\n"))
+            d.setModel(s);
+        s = dataInput.readUTF();
+        if (!s.equals("\n"))
+             d.setManufacturer(s);
+        Long l = dataInput.readLong();
+        if (l != -1) {
+            Date b = new Date();
+            b.setTime(l);
+            d.setProductionDate(b);
+        }
+        if (Router.class.isInstance(d)){
+            ((Router)d).setDataRate(dataInput.readInt());
+            if (Switch.class.isInstance(d))
+                ((Switch)d).setNumberOfPorts(dataInput.readInt());
+            if (WifiRouter.class.isInstance(d)){
+                s = dataInput.readUTF();
+                if (!s.equals("\n"))
+                    ((WifiRouter)d).setSecurityProtocol(s);
+            }
+        }
+        if (Battery.class.isInstance(d)){
+            ((Battery)d).setChargeVolume(dataInput.readInt());
+        }
+
         return d;
     }
 
