@@ -39,6 +39,10 @@ import java.util.logging.Logger;
             return true;
     }
 
+    public boolean isValidDeviceForWriteToStream(Device device){
+        return false;
+    }
+
     public void writeDevice(Device device, Writer writer) throws IOException{
         NotImplementedException e = new NotImplementedException();
         LOGGER.log(Level.SEVERE, "Method is not implemented", e);
@@ -115,8 +119,9 @@ import java.util.logging.Logger;
             throw e;
         }
         Device d = (Device) c.newInstance();
-
-        d.setIn(dataInput.readInt());
+        int i = dataInput.readInt();
+        if (i > 0)
+        d.setIn(i);
         dataInput.readUTF();
         s = dataInput.readUTF();
         if (!s.equals("\n"))
