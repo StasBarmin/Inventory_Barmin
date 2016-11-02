@@ -98,7 +98,7 @@ import java.util.logging.Logger;
         }
     }
 
-    public Device inputDevice(InputStream inputStream) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public Device inputDevice(InputStream inputStream) throws IOException, ClassNotFoundException{
         if (inputStream == null) {
             IllegalArgumentException e = new IllegalArgumentException("Missing input stream");
             LOGGER.log(Level.SEVERE, "Missing input stream", e);
@@ -118,7 +118,18 @@ import java.util.logging.Logger;
             LOGGER.log(Level.SEVERE, "Class " + s + " was not found", e);
             throw e;
         }
-        Device d = (Device) c.newInstance();
+
+        Device d = null;
+
+        if (s.equals(Battery.class.getCanonicalName()))
+            d = new Battery();
+        if (s.equals(Router.class.getCanonicalName()))
+            d = new Router();
+        if (s.equals(Switch.class.getCanonicalName()))
+            d = new Switch();
+        if (s.equals(WifiRouter.class.getCanonicalName()))
+            d = new WifiRouter();
+
         int i = dataInput.readInt();
         if (i > 0)
         d.setIn(i);

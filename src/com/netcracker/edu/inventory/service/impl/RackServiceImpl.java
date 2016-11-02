@@ -53,7 +53,7 @@ class RackServiceImpl implements RackService{
         }
     }
 
-    public Rack inputRack(InputStream inputStream) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public Rack inputRack(InputStream inputStream) throws IOException, ClassNotFoundException {
         if (inputStream == null) {
             IllegalArgumentException e = new IllegalArgumentException("Missing input stream");
             LOGGER.log(Level.SEVERE, "Missing input stream", e);
