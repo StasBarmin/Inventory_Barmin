@@ -106,61 +106,47 @@ import java.util.logging.Logger;
         }
 
         DataInput dataInput = new DataInputStream(inputStream);
-        Class c;
+        Class classFromStream;
         String s = dataInput.readUTF();
 
         if (s.equals("\n"))
             return null;
 
         try {
-             c =  Class.forName(s);
+            classFromStream =  Class.forName(s);
         } catch (ClassNotFoundException e){
             LOGGER.log(Level.SEVERE, "Class " + s + " was not found", e);
             throw e;
         }
 
-        Device d = null;
+        Device device = null;
 
-        if (s.equals(Battery.class.getCanonicalName()))
-            d = new Battery();
-        if (s.equals(Router.class.getCanonicalName()))
-            d = new Router();
-        if (s.equals(Switch.class.getCanonicalName()))
-            d = new Switch();
-        if (s.equals(WifiRouter.class.getCanonicalName()))
-            d = new WifiRouter();
-
-        int i = dataInput.readInt();
-        if (i > 0)
-        d.setIn(i);
-        dataInput.readUTF();
-        s = dataInput.readUTF();
-        if (!s.equals("\n"))
-            d.setModel(s);
-        s = dataInput.readUTF();
-        if (!s.equals("\n"))
-             d.setManufacturer(s);
-        Long l = dataInput.readLong();
-        if (l != -1) {
-            Date b = new Date();
-            b.setTime(l);
-            d.setProductionDate(b);
+        if (classFromStream.equals(Router.class)){
+            device = new Router();
+            initDevice(dataInput, device);
+            ((Router)device).setDataRate(dataInput.readInt());
         }
-        if (Router.class.isInstance(d)){
-            ((Router)d).setDataRate(dataInput.readInt());
-            if (Switch.class.isInstance(d))
-                ((Switch)d).setNumberOfPorts(dataInput.readInt());
-            if (WifiRouter.class.isInstance(d)){
-                s = dataInput.readUTF();
-                if (!s.equals("\n"))
-                    ((WifiRouter)d).setSecurityProtocol(s);
+        if (classFromStream.equals(Switch.class)) {
+            device = new Switch();
+            initDevice(dataInput, device);
+            ((Router)device).setDataRate(dataInput.readInt());
+            ((Switch) device).setNumberOfPorts(dataInput.readInt());
             }
-        }
-        if (Battery.class.isInstance(d)){
-            ((Battery)d).setChargeVolume(dataInput.readInt());
+        if (classFromStream.equals(WifiRouter.class)){
+            device = new WifiRouter();
+            initDevice(dataInput, device);
+            ((Router)device).setDataRate(dataInput.readInt());
+            s = dataInput.readUTF();
+            if (!s.equals("\n"))
+                    ((WifiRouter)device).setSecurityProtocol(s);
+            }
+        if (classFromStream.equals(Battery.class)){
+            device = new Battery();
+            initDevice(dataInput, device);
+            ((Battery)device).setChargeVolume(dataInput.readInt());
         }
 
-        return d;
+        return device;
     }
 
     public void serializeDevice(Device device, OutputStream outputStream) throws IOException{
@@ -173,5 +159,26 @@ import java.util.logging.Logger;
         NotImplementedException e = new NotImplementedException();
         LOGGER.log(Level.SEVERE, "Method is not implemented", e);
         throw e;
+    }
+
+    void initDevice (DataInput dataInput, Device device) throws IOException{
+        String s;
+
+        int i = dataInput.readInt();
+        if (i > 0)
+            device.setIn(i);
+        dataInput.readUTF();
+        s = dataInput.readUTF();
+        if (!s.equals("\n"))
+            device.setModel(s);
+        s = dataInput.readUTF();
+        if (!s.equals("\n"))
+            device.setManufacturer(s);
+        Long l = dataInput.readLong();
+        if (l != -1) {
+            Date b = new Date();
+            b.setTime(l);
+            device.setProductionDate(b);
+        }
     }
 }
