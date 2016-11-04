@@ -1,5 +1,6 @@
 package com.netcracker.edu.inventory.service.impl;
 
+import com.netcracker.edu.inventory.exception.DeviceValidationException;
 import com.netcracker.edu.inventory.model.Device;
 import com.netcracker.edu.inventory.model.impl.Battery;
 import com.netcracker.edu.inventory.model.impl.Router;
@@ -55,10 +56,69 @@ import java.util.logging.Logger;
     }
 
     public void writeDevice(Device device, Writer writer) throws IOException{
-        NotImplementedException e = new NotImplementedException();
-        LOGGER.log(Level.SEVERE, "Method is not implemented", e);
-        throw e;
+        if (device == null)
+            return ;
+        if (writer == null) {
+            IllegalArgumentException e = new IllegalArgumentException("Missing output stream");
+            LOGGER.log(Level.SEVERE, "Missing output stream", e);
+            throw e;
+        }
+        if (!isValidDeviceForWriteToStream(device)){
+            DeviceValidationException e = new DeviceValidationException("Device is not valid for operation. DeviceService.writeDevice()");
+            LOGGER.log(Level.SEVERE, "Device is not valid for operation. DeviceService.writeDevice()", e);
+            throw e;
+        }
 
+        String resStr = device.getClass().getCanonicalName();
+        resStr += "\n";
+        resStr += '[' + device.getIn() + ']';
+        resStr += device.getType();
+        resStr = appendDelimeter(resStr, " | ");
+        if (device.getModel() == null)
+            resStr = appendDelimeter(resStr, "| ");
+        else{
+            resStr += device.getModel();
+            resStr = appendDelimeter(resStr, " | ");
+        }
+        if (device.getModel() == null)
+            resStr = appendDelimeter(resStr, "| ");
+        else{
+            resStr += device.getManufacturer();
+            resStr = appendDelimeter(resStr, " | ");
+        }
+        if (device.getProductionDate() == null){
+            resStr += "-1";
+            resStr = appendDelimeter(resStr, " | ");
+        }
+        else {
+            resStr += device.getProductionDate().getTime();
+            resStr = appendDelimeter(resStr, " | ");
+        }
+        if (Router.class.isInstance(device)){
+            resStr += ((Router)device).getDataRate();
+            if (device.getClass().equals(Router.class))
+                resStr = appendDelimeter(resStr, " |");
+            else
+                resStr = appendDelimeter(resStr, " | ");
+            if (Switch.class.isInstance(device)){
+                resStr += ((Switch)device).getNumberOfPorts();
+                resStr = appendDelimeter(resStr, " |");
+            }
+            if (WifiRouter.class.isInstance(device)){
+                if (((WifiRouter)device).getSecurityProtocol() == null)
+                    resStr = appendDelimeter(resStr, "|");
+                else{
+                    resStr += ((WifiRouter)device).getSecurityProtocol();
+                    resStr = appendDelimeter(resStr, " |");
+                }
+            }
+        }
+        if (Battery.class.isInstance(device)){
+            resStr += ((Battery)device).getChargeVolume();
+            resStr = appendDelimeter(resStr, " |");
+        }
+
+        writer.write(resStr);
     }
 
     public Device readDevice(Reader reader) throws IOException, ClassNotFoundException{
@@ -191,5 +251,10 @@ import java.util.logging.Logger;
             b.setTime(l);
             device.setProductionDate(b);
         }
+    }
+
+    String appendDelimeter(String arg, String del){
+        arg += del;
+        return arg;
     }
 }
