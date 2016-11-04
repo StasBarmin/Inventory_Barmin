@@ -40,7 +40,18 @@ import java.util.logging.Logger;
     }
 
     public boolean isValidDeviceForWriteToStream(Device device){
-        return false;
+        boolean flag = true;
+        if (device.getType().contains("|"))
+            flag = false;
+        if (device.getManufacturer().contains("|"))
+            flag = false;
+        if (device.getModel().contains("|"))
+            flag = false;
+        if (WifiRouter.class.isInstance(device)){
+            if (((WifiRouter)device).getSecurityProtocol().contains("|"))
+                flag = false;
+        }
+        return flag;
     }
 
     public void writeDevice(Device device, Writer writer) throws IOException{
