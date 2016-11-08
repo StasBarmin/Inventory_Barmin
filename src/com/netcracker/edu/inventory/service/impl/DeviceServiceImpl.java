@@ -11,6 +11,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
 import java.util.Date;
+import java.util.Scanner;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,15 +43,25 @@ import java.util.logging.Logger;
     }
 
     public boolean isValidDeviceForWriteToStream(Device device){
+        if (device == null)
+            return false;
+
         boolean flag = true;
+        String s = device.getManufacturer();
+
         if (device.getType().contains("|"))
             flag = false;
-        if (device.getManufacturer().contains("|"))
+        if (s != null)
+            if (s.contains("|"))
             flag = false;
-        if (device.getModel().contains("|"))
+        s = device.getModel();
+        if (s != null)
+        if (s.contains("|"))
             flag = false;
         if (WifiRouter.class.isInstance(device)){
-            if (((WifiRouter)device).getSecurityProtocol().contains("|"))
+            s = ((WifiRouter)device).getSecurityProtocol();
+            if (s != null)
+            if (s.contains("|"))
                 flag = false;
         }
         return flag;
@@ -69,62 +81,119 @@ import java.util.logging.Logger;
             throw e;
         }
 
-        String resStr = device.getClass().getCanonicalName();
-        resStr += "\n";
-        resStr += '[' + device.getIn() + ']';
-        resStr += device.getType();
-        resStr = appendDelimeter(resStr, " | ");
+        StringBuilder resStr = new StringBuilder();
+        resStr.append(device.getClass().getCanonicalName());
+        resStr.append("\n[");
+        resStr.append(device.getIn());
+        resStr.append("] ");
+        resStr.append(device.getType());
+        resStr.append(" | ");
         if (device.getModel() == null)
-            resStr = appendDelimeter(resStr, "| ");
+            resStr.append("| ");
         else{
-            resStr += device.getModel();
-            resStr = appendDelimeter(resStr, " | ");
+            resStr.append(device.getModel());
+            resStr.append(" | ");
         }
-        if (device.getModel() == null)
-            resStr = appendDelimeter(resStr, "| ");
+        if (device.getManufacturer() == null)
+            resStr.append("| ");
         else{
-            resStr += device.getManufacturer();
-            resStr = appendDelimeter(resStr, " | ");
+            resStr.append(device.getManufacturer());
+            resStr.append(" | ");
         }
         if (device.getProductionDate() == null){
-            resStr += "-1";
-            resStr = appendDelimeter(resStr, " | ");
+            resStr.append("-1 | ");
         }
         else {
-            resStr += device.getProductionDate().getTime();
-            resStr = appendDelimeter(resStr, " | ");
+            resStr.append(device.getProductionDate().getTime());
+            resStr.append(" | ");
         }
         if (Router.class.isInstance(device)){
-            resStr += ((Router)device).getDataRate();
+            resStr.append(((Router)device).getDataRate());
             if (device.getClass().equals(Router.class))
-                resStr = appendDelimeter(resStr, " |");
+                resStr.append(" |\n");
             else
-                resStr = appendDelimeter(resStr, " | ");
+                resStr.append(" | ");
             if (Switch.class.isInstance(device)){
-                resStr += ((Switch)device).getNumberOfPorts();
-                resStr = appendDelimeter(resStr, " |");
+                resStr.append(((Switch)device).getNumberOfPorts());
+                resStr.append(" |\n");
             }
             if (WifiRouter.class.isInstance(device)){
                 if (((WifiRouter)device).getSecurityProtocol() == null)
-                    resStr = appendDelimeter(resStr, "|");
+                    resStr.append("|\n");
                 else{
-                    resStr += ((WifiRouter)device).getSecurityProtocol();
-                    resStr = appendDelimeter(resStr, " |");
+                    resStr.append(((WifiRouter)device).getSecurityProtocol());
+                    resStr.append(" |\n");
                 }
             }
         }
         if (Battery.class.isInstance(device)){
-            resStr += ((Battery)device).getChargeVolume();
-            resStr = appendDelimeter(resStr, " |");
+            resStr.append(((Battery)device).getChargeVolume());
+            resStr.append(" |\n");
         }
 
-        writer.write(resStr);
+        writer.write(resStr.toString());
     }
 
     public Device readDevice(Reader reader) throws IOException, ClassNotFoundException{
-        NotImplementedException e = new NotImplementedException();
-        LOGGER.log(Level.SEVERE, "Method is not implemented", e);
-        throw e;
+        if (reader == null) {
+            IllegalArgumentException e = new IllegalArgumentException("Missing input stream");
+            LOGGER.log(Level.SEVERE, "Missing input stream", e);
+            throw e;
+        }
+
+        String scan = readString(reader);
+
+        Class classFromStream;
+        try {
+            classFromStream =  Class.forName(scan);
+        } catch (ClassNotFoundException e){
+            LOGGER.log(Level.SEVERE, "Class " + scan + " was not found", e);
+            throw e;
+        }
+
+        if (scan.equals("\n"))
+            return null;
+
+        Device device = null;
+        scan = readString(reader);
+        String temp;
+
+        if (classFromStream.equals(Router.class)){
+            device = new Router();
+            StringTokenizer strTok = initDeviceChar(scan, device);
+            temp = strTok.nextToken();
+            if (!temp.equals(" "))
+            ((Router)device).setDataRate(Integer.parseInt(temp.substring(1,temp.length()-1)));
+        }
+        if (classFromStream.equals(Switch.class)) {
+            device = new Switch();
+            StringTokenizer strTok = initDeviceChar(scan, device);
+            temp = strTok.nextToken();
+            if (!temp.equals(" "))
+            ((Router)device).setDataRate(Integer.parseInt(temp.substring(1,temp.length()-1)));
+            temp = strTok.nextToken();
+            if (!temp.equals("  "))
+            ((Switch) device).setNumberOfPorts(Integer.parseInt(temp.substring(1,temp.length()-1)));
+        }
+        if (classFromStream.equals(WifiRouter.class)){
+            device = new WifiRouter();
+            StringTokenizer strTok = initDeviceChar(scan, device);
+            temp = strTok.nextToken();
+            if (!temp.equals(" "))
+            ((Router)device).setDataRate(Integer.parseInt(temp.substring(1,temp.length()-1)));
+            temp = strTok.nextToken();
+            if (!temp.equals(" "))
+                ((WifiRouter)device).setSecurityProtocol(temp.substring(1,temp.length()-1));
+        }
+        if (classFromStream.equals(Battery.class)){
+            device = new Battery();
+            StringTokenizer strTok = initDeviceChar(scan, device);
+            temp = strTok.nextToken();
+            if (!temp.equals(" "))
+            ((Battery)device).setChargeVolume(Integer.parseInt(temp.substring(1,temp.length()-1)));
+        }
+
+        return device;
     }
 
     public void outputDevice(Device device, OutputStream outputStream) throws IOException{
@@ -221,18 +290,38 @@ import java.util.logging.Logger;
     }
 
     public void serializeDevice(Device device, OutputStream outputStream) throws IOException{
-        NotImplementedException e = new NotImplementedException();
-        LOGGER.log(Level.SEVERE, "Method is not implemented", e);
-        throw e;
+        if (device == null)
+            return ;
+        if (outputStream == null) {
+            IllegalArgumentException e = new IllegalArgumentException("Missing output stream");
+            LOGGER.log(Level.SEVERE, "Missing output stream", e);
+            throw e;
+        }
+
+        ObjectOutputStream oos = new ObjectOutputStream(outputStream);
+        oos.writeObject(device);
     }
 
     public Device deserializeDevice(InputStream inputStream) throws IOException, ClassCastException{
-        NotImplementedException e = new NotImplementedException();
-        LOGGER.log(Level.SEVERE, "Method is not implemented", e);
-        throw e;
+        if (inputStream == null) {
+            IllegalArgumentException e = new IllegalArgumentException("Missing input stream");
+            LOGGER.log(Level.SEVERE, "Missing input stream", e);
+            throw e;
+        }
+
+        ObjectInputStream ois = new ObjectInputStream(inputStream);
+        Device device;
+        try {
+            device = (Device)ois.readObject();
+        } catch (ClassNotFoundException e) {
+            ClassCastException cce = new ClassCastException();
+            throw cce;
+        }
+
+        return device;
     }
 
-    void initDevice (DataInput dataInput, Device device) throws IOException{
+    void initDevice(DataInput dataInput, Device device) throws IOException{
         String s;
 
         int i = dataInput.readInt();
@@ -253,8 +342,45 @@ import java.util.logging.Logger;
         }
     }
 
-    String appendDelimeter(String arg, String del){
-        arg += del;
-        return arg;
+    StringTokenizer initDeviceChar(String s, Device device) throws IOException{
+        int position = s.indexOf("]");
+        int i = Integer.parseInt(s.substring(1,position));
+        if (i > 0)
+            device.setIn(i);
+        String sWithoutIn = s.substring(position + 1);
+        StringTokenizer sT = new StringTokenizer(sWithoutIn, "|");
+        String temp;
+        temp = sT.nextToken();
+        temp = sT.nextToken();
+        if (!temp.equals(" "))
+            device.setModel(temp.substring(1,temp.length()-1));
+        temp = sT.nextToken();
+        if (!temp.equals(" "))
+            device.setManufacturer(temp.substring(1,temp.length()-1));
+        temp = sT.nextToken();
+        if (!temp.trim().equals("-1")) {
+            Date b = new Date(Long.parseLong(temp.trim()));
+            device.setProductionDate(b);
+        }
+
+        return sT;
+    }
+
+    static String readString(Reader reader) throws IOException{
+        StringBuilder sb = new StringBuilder();
+
+        do {
+            int charV = reader.read();
+            if (charV == -1 || charV == ((int)('\n')) )
+                break;
+            else
+                sb.append(Character.toChars(charV));
+
+        } while (true);
+
+        if (sb.charAt(sb.length()-1) == '\n')
+            sb.deleteCharAt(sb.length() - 1);
+
+        return sb.toString();
     }
 }
