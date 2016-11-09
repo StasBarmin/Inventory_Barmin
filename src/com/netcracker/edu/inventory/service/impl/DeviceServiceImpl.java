@@ -143,6 +143,9 @@ import java.util.logging.Logger;
 
         String scan = readString(reader);
 
+        if (scan.equals(""))
+            return null;
+
         Class classFromStream;
         try {
             classFromStream =  Class.forName(scan);
@@ -151,8 +154,6 @@ import java.util.logging.Logger;
             throw e;
         }
 
-        if (scan.equals("\n"))
-            return null;
 
         Device device = null;
         scan = readString(reader);
@@ -302,7 +303,7 @@ import java.util.logging.Logger;
         oos.writeObject(device);
     }
 
-    public Device deserializeDevice(InputStream inputStream) throws IOException, ClassCastException{
+    public Device deserializeDevice(InputStream inputStream) throws IOException, ClassCastException, ClassNotFoundException{
         if (inputStream == null) {
             IllegalArgumentException e = new IllegalArgumentException("Missing input stream");
             LOGGER.log(Level.SEVERE, "Missing input stream", e);
@@ -310,13 +311,7 @@ import java.util.logging.Logger;
         }
 
         ObjectInputStream ois = new ObjectInputStream(inputStream);
-        Device device;
-        try {
-            device = (Device)ois.readObject();
-        } catch (ClassNotFoundException e) {
-            ClassCastException cce = new ClassCastException();
-            throw cce;
-        }
+        Device device = (Device)ois.readObject();
 
         return device;
     }
@@ -377,9 +372,6 @@ import java.util.logging.Logger;
                 sb.append(Character.toChars(charV));
 
         } while (true);
-
-        if (sb.charAt(sb.length()-1) == '\n')
-            sb.deleteCharAt(sb.length() - 1);
 
         return sb.toString();
     }

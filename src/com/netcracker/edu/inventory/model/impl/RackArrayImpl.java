@@ -9,7 +9,7 @@ import java.util.logging.Level;
 /**
  * Created by barmin on 07.10.2016.
  */
- public class RackArrayImpl implements Rack {
+ public class RackArrayImpl implements Rack, java.io.Serializable {
     int size;
     @Deprecated
     String type;

@@ -11,6 +11,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.PipedReader;
+import java.io.PipedWriter;
 
 import static org.junit.Assert.*;
 
@@ -31,13 +33,50 @@ public class RackServiceImplTest {
 
     }
 
-    @Test(expected = NotImplementedException.class)
-    public void writeRack() throws Exception {
-        rackService.writeRack(null, null);
+    @Test
+    public void writeReadRack() throws Exception {
+        PipedWriter pipedWriter = new PipedWriter();
+        PipedReader pipedReader = new PipedReader(pipedWriter);
+        Switch aSwitch = DeviceServiceImplTest.createSwitch();
+        Router router = DeviceServiceImplTest.createRouter();
+        router.setIn(5);
+        Rack emptyRack = new RackArrayImpl(0, Device.class);
+        Rack partlyRack =  new RackArrayImpl(3, Router.class);
+        partlyRack.insertDevToSlot(aSwitch, 0);
+        partlyRack.insertDevToSlot(router, 2);
+
+        rackService.writeRack(emptyRack, pipedWriter);
+        rackService.writeRack(partlyRack, pipedWriter);
+        pipedWriter.close();
+
+        Rack result1 = rackService.readRack(pipedReader);
+        Rack result2 = rackService.readRack(pipedReader);
+        pipedReader.close();
+
+        assertRack(emptyRack, result1);
+        assertRack(partlyRack, result2);
     }
 
-    @Test(expected = NotImplementedException.class)
-    public void readRack() throws Exception {
+    @Test
+    public void writeRackRackNull() throws Exception {
+        PipedWriter pipedWriter = new PipedWriter();
+        PipedReader pipedReader = new PipedReader(pipedWriter);
+
+        rackService.writeRack(null, pipedWriter);
+        pipedWriter.close();
+
+        assertEquals(-1, pipedReader.read());
+        pipedReader.close();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void writeRackStreamNull() throws Exception {
+        Rack emptyRack = new RackArrayImpl(0, Device.class);
+        rackService.writeRack(emptyRack, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void readRackNull() throws Exception {
         rackService.readRack(null);
     }
 
@@ -72,11 +111,10 @@ public class RackServiceImplTest {
         PipedInputStream pipedInputStream = new PipedInputStream(pipedOutputStream);
 
         rackService.outputRack(null, pipedOutputStream);
-
-        assertEquals(0, pipedInputStream.available());
-
-        pipedInputStream.close();
         pipedOutputStream.close();
+
+        assertEquals(-1, pipedInputStream.read());
+        pipedInputStream.close();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -90,13 +128,50 @@ public class RackServiceImplTest {
         rackService.inputRack(null);
     }
 
-    @Test(expected = NotImplementedException.class)
-    public void serializeRack() throws Exception {
-        rackService.serializeRack(null, null);
+    @Test
+    public void serializeDeserializeRack() throws Exception {
+        PipedOutputStream pipedOutputStream = new PipedOutputStream();
+        PipedInputStream pipedInputStream = new PipedInputStream(pipedOutputStream, 2048);
+        Switch aSwitch = DeviceServiceImplTest.createSwitch();
+        Router router = DeviceServiceImplTest.createRouter();
+        router.setIn(5);
+        Rack emptyRack = new RackArrayImpl(0, Device.class);
+        Rack partlyRack =  new RackArrayImpl(3, Router.class);
+        partlyRack.insertDevToSlot(aSwitch, 0);
+        partlyRack.insertDevToSlot(router, 2);
+
+        rackService.serializeRack(emptyRack, pipedOutputStream);
+        rackService.serializeRack(partlyRack, pipedOutputStream);
+        pipedOutputStream.close();
+
+        Rack result1 = rackService.deserializeRack(pipedInputStream);
+        Rack result2 = rackService.deserializeRack(pipedInputStream);
+        pipedInputStream.close();
+
+        assertRack(emptyRack, result1);
+        assertRack(partlyRack, result2);
     }
 
-    @Test(expected = NotImplementedException.class)
-    public void deserializeRack() throws Exception {
+    @Test
+    public void serializeRackRackNull() throws Exception {
+        PipedOutputStream pipedOutputStream = new PipedOutputStream();
+        PipedInputStream pipedInputStream = new PipedInputStream(pipedOutputStream);
+
+        rackService.serializeRack(null, pipedOutputStream);
+        pipedOutputStream.close();
+
+        assertEquals(-1, pipedInputStream.read());
+        pipedInputStream.close();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void serializeRackStreamNull() throws Exception {
+        Rack emptyRack = new RackArrayImpl(0, Device.class);
+        rackService.serializeRack(emptyRack, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void deserializeRackNull() throws Exception {
         rackService.deserializeRack(null);
     }
 
@@ -106,22 +181,26 @@ public class RackServiceImplTest {
         for (int i = 0; i < expRack.getSize(); i++) {
             Device expDevice = expRack.getDevAtSlot(i);
             Device device = rack.getDevAtSlot(i);
-            assertEquals(expDevice.getClass(), device.getClass());
-            if (expDevice.getClass() == Battery.class) {
-                DeviceServiceImplTest.assertBattery((Battery) expDevice, (Battery) device);
-                break;
-            }
-            if (expDevice.getClass() == Router.class) {
-                DeviceServiceImplTest.assertRouter((Router) expDevice, (Router) device);
-                break;
-            }
-            if (expDevice.getClass() == Switch.class) {
-                DeviceServiceImplTest.assertSwitch((Switch) expDevice, (Switch) device);
-                break;
-            }
-            if (expDevice.getClass() == WifiRouter.class) {
-                DeviceServiceImplTest.assertWifiRouter((WifiRouter) expDevice, (WifiRouter) device);
-                break;
+            if (expDevice == null) {
+                assertNull(device);
+            } else {
+                assertEquals(expDevice.getClass(), device.getClass());
+                if (expDevice.getClass() == Battery.class) {
+                    DeviceServiceImplTest.assertBattery((Battery) expDevice, (Battery) device);
+                    continue;
+                }
+                if (expDevice.getClass() == Router.class) {
+                    DeviceServiceImplTest.assertRouter((Router) expDevice, (Router) device);
+                    continue;
+                }
+                if (expDevice.getClass() == Switch.class) {
+                    DeviceServiceImplTest.assertSwitch((Switch) expDevice, (Switch) device);
+                    continue;
+                }
+                if (expDevice.getClass() == WifiRouter.class) {
+                    DeviceServiceImplTest.assertWifiRouter((WifiRouter) expDevice, (WifiRouter) device);
+                    continue;
+                }
             }
         }
     }
