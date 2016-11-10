@@ -5,6 +5,9 @@ import com.netcracker.edu.inventory.model.Rack;
 import com.netcracker.edu.inventory.model.impl.RackArrayImpl;
 import com.netcracker.edu.inventory.service.RackService;
 import com.netcracker.edu.inventory.service.impl.DeviceServiceImpl;
+import com.netcracker.edu.location.Location;
+import com.netcracker.edu.location.impl.*;
+import com.netcracker.edu.location.impl.ServiceImpl;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
@@ -29,10 +32,14 @@ class RackServiceImpl implements RackService{
 
         DeviceServiceImpl dsi = new DeviceServiceImpl();
         StringBuilder resStr = new StringBuilder();
+        com.netcracker.edu.location.impl.ServiceImpl locServImpl = new ServiceImpl();
+
         resStr.append(rack.getSize());
         resStr.append(" ");
         resStr.append(rack.getTypeOfDevices().getCanonicalName());
         resStr.append("\n\n\n");
+
+        locServImpl.writeLocation(rack.getLocation(), writer);
         writer.write(resStr.toString());
 
         for (int i = 0; i < rack.getSize(); i++ ){
@@ -55,7 +62,9 @@ class RackServiceImpl implements RackService{
 
         String firstStr = DeviceServiceImpl.readString(reader);
         StringTokenizer sT = new StringTokenizer(firstStr);
+        com.netcracker.edu.location.impl.ServiceImpl locServImpl = new ServiceImpl();
 
+        Location location = locServImpl.readLocation(reader);
         int size = Integer.parseInt(sT.nextToken());
         Class rackClazz;
         String s = sT.nextToken();
@@ -67,6 +76,7 @@ class RackServiceImpl implements RackService{
         }
 
         Rack rack = new RackArrayImpl(size, rackClazz);
+        rack.setLocation(location);
         DeviceServiceImpl dsi = new DeviceServiceImpl();
 
 //        Skip 2 lines
@@ -94,9 +104,12 @@ class RackServiceImpl implements RackService{
         }
 
         DeviceServiceImpl dsi = new DeviceServiceImpl();
-        DataOutput dout = new DataOutputStream(outputStream);
+        com.netcracker.edu.location.impl.ServiceImpl locServImpl = new ServiceImpl();
+//        DataOutput dout = new DataOutputStream(outputStream);
 
         DataOutput dataOutput = new DataOutputStream(outputStream);
+
+        locServImpl.outputLocation(rack.getLocation(), outputStream);
         dataOutput.writeInt(rack.getSize());
         dataOutput.writeUTF(rack.getTypeOfDevices().getCanonicalName());
 
@@ -105,7 +118,7 @@ class RackServiceImpl implements RackService{
             if (d != null)
             dsi.outputDevice(d, outputStream);
             else
-                dout.writeUTF("\n");
+                dataOutput.writeUTF("\n");
         }
     }
 
@@ -117,6 +130,8 @@ class RackServiceImpl implements RackService{
         }
         DataInput dataInput = new DataInputStream(inputStream);
 
+        com.netcracker.edu.location.impl.ServiceImpl locServImpl = new ServiceImpl();
+        Location location = locServImpl.inputLocation(inputStream);
         int size = dataInput.readInt();
         Class c;
         String s = dataInput.readUTF();
@@ -128,6 +143,7 @@ class RackServiceImpl implements RackService{
         }
 
         Rack rack = new RackArrayImpl(size, c);
+        rack.setLocation(location);
         DeviceServiceImpl dsi = new DeviceServiceImpl();
 
         for (int i = 0; i < size; i++ ){
