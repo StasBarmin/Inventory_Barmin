@@ -38,11 +38,6 @@ import java.util.logging.Logger;
         return type;
     }
 
-    @Deprecated
-    public void setType(String type) {
-        LOGGER.log(Level.WARNING, "Method setType is out of date");
-           }
-
     @Override
     public String getManufacturer() {
         return manufacturer;
