@@ -11,11 +11,11 @@ import java.util.logging.Level;
 /**
  * Created by barmin on 07.10.2016.
  */
- public class RackArrayImpl implements Rack, java.io.Serializable {
+ public class RackArrayImpl<D extends Device> implements Rack<D>, java.io.Serializable {
     int size;
     final Class clazz;
     Location location;
-    Device devices [];
+    D devices [];
     static protected Logger LOGGER = Logger.getLogger(RackArrayImpl.class.getName());
 
     public RackArrayImpl(int size, Class clazz) throws IllegalArgumentException {
@@ -31,7 +31,7 @@ import java.util.logging.Level;
         }
         this.size = size;
         this.clazz = clazz;
-        devices = new Device[size];
+        devices = (D[]) new Device[size];
     }
 
     public Location getLocation(){
@@ -60,7 +60,7 @@ import java.util.logging.Level;
         return clazz;
     }
 
-    public Device getDevAtSlot(int index) throws IndexOutOfBoundsException{
+    public D getDevAtSlot(int index) throws IndexOutOfBoundsException{
         if (index >= devices.length || index < 0){
             IndexOutOfBoundsException e = new IndexOutOfBoundsException("Index " + index + " is out of bounds of array. Index should be from 0 to " + (devices.length - 1));
             LOGGER.log(Level.SEVERE, "Index " + index + " is out of bounds of array. Index should be from 0 to " + (devices.length - 1));
@@ -73,7 +73,8 @@ import java.util.logging.Level;
             return devices[index];
     }
 
-    public boolean insertDevToSlot(Device device, int index) throws IndexOutOfBoundsException, DeviceValidationException {
+
+    public boolean insertDevToSlot(D device, int index) throws IndexOutOfBoundsException, DeviceValidationException {
 
         if (device == null || device.getIn() == 0 || device.getType() == null){
             DeviceValidationException e;
@@ -97,7 +98,7 @@ import java.util.logging.Level;
 
         if (devices[index] == null) {
             if (clazz.isInstance(device)) {
-                devices[index] = device;
+                devices[index] =(D) device;
                 return true;
             } else {
                 LOGGER.log(Level.WARNING, "The rack can contain only devices type  " + clazz.getSimpleName());
@@ -111,8 +112,8 @@ import java.util.logging.Level;
         }
     }
 
-    public Device removeDevFromSlot(int index) throws IndexOutOfBoundsException{
-        Device dt;
+    public D removeDevFromSlot(int index) throws IndexOutOfBoundsException{
+        D dt;
 
         if (index >= devices.length || index < 0){
             IndexOutOfBoundsException e = new IndexOutOfBoundsException("Index " + index + " is out of bounds of array. Index should be from 0 to " + (devices.length - 1));
@@ -131,7 +132,7 @@ import java.util.logging.Level;
         }
     }
 
-    public Device getDevByIN(int in){
+    public D getDevByIN(int in){
         for (int i = 0; i < devices.length; i++){
             if (devices[i] != null) {
                 if (in == devices[i].getIn()) {
@@ -142,7 +143,7 @@ import java.util.logging.Level;
         return null;
     }
 
-    public Device[] getAllDeviceAsArray(){
+    public D[] getAllDeviceAsArray(){
         int counter = 0;
 
         for (int i = 0; i < devices.length; i++){
@@ -151,7 +152,7 @@ import java.util.logging.Level;
             }
         }
 
-        Device[] devs = new Device[counter];
+        D[] devs = (D[])new Device[counter];
         counter = 0;
 
         for (int i = 0; i < devices.length; i++){
