@@ -67,4 +67,32 @@ import java.util.logging.Logger;
     public void setProductionDate(Date productionDate) {
         this.productionDate = productionDate;
     }
+
+    public void feelAllFields(Field[] fields) {
+        setIn((Integer) fields[0].getValue());
+        setManufacturer((String) fields[2].getValue());
+        setModel((String) fields[3].getValue());
+        setProductionDate((Date) fields[4].getValue());
+    }
+
+    public Field[] getAllFields(){
+        Field[] fields = new Field[5];
+
+        fields[0].setType(Integer.class);
+        fields[0].setValue(getIn());
+
+        fields[1].setType(Class.class);
+        fields[1].setValue(getType());
+
+        fields[2].setType(String.class);
+        fields[2].setValue(getManufacturer());
+
+        fields[3].setType(String.class);
+        fields[3].setValue(getModel());
+
+        fields[4].setType(Date.class);
+        fields[4].setValue(getProductionDate());
+
+        return fields;
+    }
 }
