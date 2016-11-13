@@ -93,30 +93,35 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
             device = new Router();
             Field[] fields = new Field[6];
             StringTokenizer strTok = initDeviceChar(scan, fields);
+            fields[5] = new Field(Integer.class, null);
             temp = strTok.nextToken();
             if (!temp.equals(" "))
-                fields[5].setValue(temp.substring(1,temp.length()-1));
+                fields[5].setValue(Integer.parseInt(temp.substring(1,temp.length()-1)));
             device.feelAllFields(fields);
         }
         if (classFromStream.equals(Switch.class)) {
             device = new Switch();
             Field[] fields = new Field[7];
             StringTokenizer strTok = initDeviceChar(scan, fields);
+            fields[5] = new Field(Integer.class, null);
+            fields[6] = new Field(Integer.class, null);
             temp = strTok.nextToken();
             if (!temp.equals(" "))
-                fields[5].setValue(temp.substring(1,temp.length()-1));
+                fields[5].setValue(Integer.parseInt(temp.substring(1,temp.length()-1)));
             temp = strTok.nextToken();
             if (!temp.equals("  "))
-                fields[6].setValue(temp.substring(1,temp.length()-1));
+                fields[6].setValue(Integer.parseInt(temp.substring(1,temp.length()-1)));
             device.feelAllFields(fields);
         }
         if (classFromStream.equals(WifiRouter.class)){
             device = new WifiRouter();
             Field[] fields = new Field[7];
             StringTokenizer strTok = initDeviceChar(scan, fields);
+            fields[5] = new Field(Integer.class, null);
+            fields[6] = new Field(String.class, null);
             temp = strTok.nextToken();
             if (!temp.equals(" "))
-                fields[5].setValue(temp.substring(1,temp.length()-1));
+                fields[5].setValue(Integer.parseInt(temp.substring(1,temp.length()-1)));
             temp = strTok.nextToken();
             if (!temp.equals(" "))
                 fields[6].setValue(temp.substring(1,temp.length()-1));
@@ -126,9 +131,10 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
             device = new Battery();
             Field[] fields = new Field[6];
             StringTokenizer strTok = initDeviceChar(scan, fields);
+            fields[5] = new Field(Integer.class, null);
             temp = strTok.nextToken();
             if (!temp.equals(" "))
-                fields[5].setValue(temp.substring(1,temp.length()-1));
+                fields[5].setValue(Integer.parseInt(temp.substring(1,temp.length()-1)));
             device.feelAllFields(fields);
         }
 
@@ -149,7 +155,7 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
         dataOutput.writeUTF(device.getClass().getCanonicalName());
         dataOutput.writeInt((Integer) fields[0].getValue());
 
-         for (int i = 1; i < fields.length; i++) {
+         for (int i = 1; i < 5; i++) {
              if (fields[i].getValue() == null)
                  if (i == 4)
                      dataOutput.writeLong(-1);
@@ -157,7 +163,7 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
                      dataOutput.writeUTF("\n");
              else
                  if (i == 4)
-                     dataOutput.writeLong((Long)fields[i].getValue());
+                     dataOutput.writeLong(((Date)fields[i].getValue()).getTime());
                  else
                      dataOutput.writeUTF((String) fields[i].getValue());
          }
@@ -205,29 +211,34 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
             device = new Router();
             Field[] fields = new Field[6];
             initDevice(dataInput, fields);
-            fields[5].setValue(dataInput.readInt());
+            fields[5] = new Field(Integer.class, dataInput.readInt());
+            device.feelAllFields(fields);
         }
         if (classFromStream.equals(Switch.class)) {
             device = new Switch();
             Field[] fields = new Field[7];
             initDevice(dataInput, fields);
-            fields[5].setValue(dataInput.readInt());
-            fields[6].setValue(dataInput.readInt());
+            fields[5] = new Field(Integer.class, dataInput.readInt());
+            fields[6] = new Field(Integer.class, dataInput.readInt());
+            device.feelAllFields(fields);
         }
         if (classFromStream.equals(WifiRouter.class)){
             device = new WifiRouter();
             Field[] fields = new Field[7];
             initDevice(dataInput, fields);
-            fields[5].setValue(dataInput.readInt());
+            fields[5] = new Field(Integer.class, dataInput.readInt());
+            fields[6] = new Field(String.class, null);
             s = dataInput.readUTF();
             if (!s.equals("\n"))
                 fields[6].setValue(s);
+            device.feelAllFields(fields);
         }
         if (classFromStream.equals(Battery.class)){
             device = new Battery();
             Field[] fields = new Field[6];
             initDevice(dataInput, fields);
-            fields[5].setValue(dataInput.readInt());
+            fields[5] = new Field(Integer.class, dataInput.readInt());
+            device.feelAllFields(fields);
         }
 
         return device;
@@ -298,11 +309,12 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
             throw e;
         }
 
-        String firstStr = readString(reader);
-        StringTokenizer sT = new StringTokenizer(firstStr);
         com.netcracker.edu.location.impl.ServiceImpl locServImpl = new com.netcracker.edu.location.impl.ServiceImpl();
 
         Location location = locServImpl.readLocation(reader);
+        String firstStr = readString(reader);
+        StringTokenizer sT = new StringTokenizer(firstStr);
+
         int size = Integer.parseInt(sT.nextToken());
         Class rackClazz;
         String s = sT.nextToken();
@@ -421,6 +433,11 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
 
     void initDevice(DataInput dataInput, Field[] fields) throws IOException{
         String s;
+        fields[0] = new Field(Integer.class, null);
+        fields[1] = new Field(String.class, null);
+        fields[2] = new Field(String.class, null);
+        fields[3] = new Field(String.class, null);
+        fields[4] = new Field(Date.class, null);
 
         int in = dataInput.readInt();
         if (in > 0)
@@ -433,16 +450,24 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
 
         Long l = dataInput.readLong();
         if (l != -1) {
-            fields[4].setValue(l);
+            Date b = new Date(l);
+            fields[4].setValue(b);
         }
     }
 
     StringTokenizer initDeviceChar(String s, Field[] fields) throws IOException{
 
+        fields[0] = new Field(Integer.class, null);
+        fields[1] = new Field(String.class, null);
+        fields[2] = new Field(String.class, null);
+        fields[3] = new Field(String.class, null);
+        fields[4] = new Field(Date.class, null);
+
         int position = s.indexOf("]");
         int in = Integer.parseInt(s.substring(1,position));
         if (in > 0)
-            fields[0].setValue(in);
+        fields[0].setValue(in);
+
         String sWithoutIn = s.substring(position + 1);
         StringTokenizer sT = new StringTokenizer(sWithoutIn, "|");
         String temp;
@@ -452,8 +477,10 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
             if (!temp.equals(" ") && i != 4)
                 fields[i].setValue(temp.substring(1,temp.length()-1));
             else
-                if (!temp.trim().equals("-1") && i == 4)
-                    fields[i].setValue(temp.substring(1,temp.length()-1));
+                if (!temp.trim().equals("-1") && i == 4){
+                    Date b = new Date(Long.parseLong(temp.trim()));
+                    fields[i].setValue(b);
+                }
         }
 
         return sT;

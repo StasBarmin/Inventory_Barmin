@@ -6,7 +6,7 @@ package com.netcracker.edu.inventory.model;
 public interface FeelableEntity {
 
 
-        void feelAllFields(Field[] fields);
+       void feelAllFields(Field[] fields);
 
         Field[] getAllFields();
 

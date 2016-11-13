@@ -20,6 +20,7 @@ import java.util.Arrays;
 
     public void feelAllFields(Field[] fields) {
         super.feelAllFields(fields);
+        if (fields[5].getValue() != null)
         setChargeVolume((Integer) fields[5].getValue());
     }
 
@@ -27,8 +28,7 @@ import java.util.Arrays;
         Field[] fields;
 
         fields = Arrays.copyOf(super.getAllFields(), 6);
-        fields[5].setType(Integer.class);
-        fields[5].setValue(getChargeVolume());
+        fields[5] = new Field(Integer.class,getChargeVolume());
 
         return fields;
     }

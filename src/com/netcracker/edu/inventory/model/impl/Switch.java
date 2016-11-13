@@ -20,6 +20,7 @@ public class Switch extends Router implements Device {
 
     public void feelAllFields(Field[] fields) {
         super.feelAllFields(fields);
+        if (fields[6].getValue() != null)
         setNumberOfPorts((Integer) fields[6].getValue());
     }
 
@@ -27,8 +28,7 @@ public class Switch extends Router implements Device {
         Field[] fields;
 
         fields = Arrays.copyOf(super.getAllFields(), 7);
-        fields[6].setType(Integer.class);
-        fields[6].setValue(getNumberOfPorts());
+        fields[6] = new Field(Integer.class,getNumberOfPorts());
 
         return fields;
     }

@@ -1,6 +1,7 @@
 package com.netcracker.edu.inventory.model.impl;
 
 import com.netcracker.edu.inventory.model.Device;
+import com.netcracker.edu.inventory.model.FeelableEntity;
 
 import java.util.Date;
 import java.util.logging.Level;
@@ -9,7 +10,7 @@ import java.util.logging.Logger;
 /**
  * Created by barmin on 07.10.2016.
  */
- abstract class AbstractDevice implements Device, java.io.Serializable {
+ abstract class AbstractDevice implements Device, FeelableEntity, java.io.Serializable {
     int in;
     final String type = this.getClass().getSimpleName();
     String manufacturer;
@@ -69,29 +70,29 @@ import java.util.logging.Logger;
     }
 
     public void feelAllFields(Field[] fields) {
+        if (fields[0].getValue() != null)
+        if ((Integer)fields[0].getValue() > 0)
         setIn((Integer) fields[0].getValue());
+        if (fields[2].getValue() != null)
         setManufacturer((String) fields[2].getValue());
+        if (fields[3].getValue() != null)
         setModel((String) fields[3].getValue());
+        if (fields[4].getValue() != null)
         setProductionDate((Date) fields[4].getValue());
     }
 
     public Field[] getAllFields(){
-        Field[] fields = new Field[5];
+     Field[] fields = new Field[5];
 
-        fields[0].setType(Integer.class);
-        fields[0].setValue(getIn());
+       fields[0] = new Field(Integer.class, getIn());
 
-        fields[1].setType(Class.class);
-        fields[1].setValue(getType());
+        fields[1] = new Field(Class.class, getType());
 
-        fields[2].setType(String.class);
-        fields[2].setValue(getManufacturer());
+        fields[2] = new Field(String.class, getManufacturer());
 
-        fields[3].setType(String.class);
-        fields[3].setValue(getModel());
+        fields[3] = new Field(String.class, getModel());
 
-        fields[4].setType(Date.class);
-        fields[4].setValue(getProductionDate());
+        fields[4] = new Field(Date.class,getProductionDate());
 
         return fields;
     }

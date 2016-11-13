@@ -20,6 +20,7 @@ public class Router extends AbstractDevice implements Device {
 
     public void feelAllFields(Field[] fields) {
         super.feelAllFields(fields);
+        if (fields[5].getValue() != null)
         setDataRate((Integer) fields[5].getValue());
     }
 
@@ -27,8 +28,7 @@ public class Router extends AbstractDevice implements Device {
         Field[] fields;
 
         fields = Arrays.copyOf(super.getAllFields(), 6);
-        fields[5].setType(Integer.class);
-        fields[5].setValue(getDataRate());
+        fields[5] = new Field(Integer.class,getDataRate());
 
         return fields;
     }
