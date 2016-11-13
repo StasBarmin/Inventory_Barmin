@@ -2,6 +2,7 @@ package com.netcracker.edu.inventory.service.impl;
 
 import com.netcracker.edu.inventory.exception.DeviceValidationException;
 import com.netcracker.edu.inventory.model.Device;
+import com.netcracker.edu.inventory.model.FeelableEntity;
 import com.netcracker.edu.inventory.model.Rack;
 import com.netcracker.edu.inventory.model.impl.*;
 import com.netcracker.edu.location.Location;
@@ -12,6 +13,8 @@ import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.netcracker.edu.inventory.model.FeelableEntity.*;
 
 /**
  * Created by barmin on 11.11.2016.
@@ -34,57 +37,31 @@ import java.util.logging.Logger;
             throw e;
         }
 
+         Field[] fields = device.getAllFields();
         StringBuilder resStr = new StringBuilder();
         resStr.append(device.getClass().getCanonicalName());
         resStr.append("\n[");
-        resStr.append(device.getIn());
+        resStr.append(fields[0].getValue());
         resStr.append("] ");
-        resStr.append(device.getType());
-        resStr.append(" | ");
-        if (device.getModel() == null)
-            resStr.append("| ");
-        else{
-            resStr.append(device.getModel());
-            resStr.append(" | ");
-        }
-        if (device.getManufacturer() == null)
-            resStr.append("| ");
-        else{
-            resStr.append(device.getManufacturer());
-            resStr.append(" | ");
-        }
-        if (device.getProductionDate() == null){
-            resStr.append("-1 | ");
-        }
-        else {
-            resStr.append(device.getProductionDate().getTime());
-            resStr.append(" | ");
-        }
-        if (Router.class.isInstance(device)){
-            resStr.append(((Router)device).getDataRate());
-            if (device.getClass().equals(Router.class))
-                resStr.append(" |\n");
-            else
-                resStr.append(" | ");
-            if (Switch.class.isInstance(device)){
-                resStr.append(((Switch)device).getNumberOfPorts());
-                resStr.append(" |\n");
-            }
-            if (WifiRouter.class.isInstance(device)){
-                if (((WifiRouter)device).getSecurityProtocol() == null)
-                    resStr.append("|\n");
-                else{
-                    resStr.append(((WifiRouter)device).getSecurityProtocol());
-                    resStr.append(" |\n");
-                }
-            }
-        }
-        if (Battery.class.isInstance(device)){
-            resStr.append(((Battery)device).getChargeVolume());
-            resStr.append(" |\n");
-        }
+         for (int i = 1; i < fields.length; i++){
+             if (fields[i].getValue() == null)
+                 if (i == 4)
+                     resStr.append("-1 | ");
+                 else
+                     resStr.append("| ");
+            else{
+                 if (i == 4)
+                     resStr.append(((Date)fields[i].getValue()).getTime());
+                 else
+                     resStr.append(fields[i].getValue());
+                 if (i == fields.length - 1)
+                     resStr.append(" |\n");
+                 else
+                     resStr.append(" | ");
+             }
+         }
 
-        writer.write(resStr.toString());
+         writer.write(resStr.toString());
     }
 
      Device readDevice(Reader reader) throws IOException, ClassNotFoundException{
@@ -114,37 +91,45 @@ import java.util.logging.Logger;
 
         if (classFromStream.equals(Router.class)){
             device = new Router();
-            StringTokenizer strTok = initDeviceChar(scan, device);
+            Field[] fields = new Field[6];
+            StringTokenizer strTok = initDeviceChar(scan, fields);
             temp = strTok.nextToken();
             if (!temp.equals(" "))
-                ((Router)device).setDataRate(Integer.parseInt(temp.substring(1,temp.length()-1)));
+                fields[5].setValue(temp.substring(1,temp.length()-1));
+            device.feelAllFields(fields);
         }
         if (classFromStream.equals(Switch.class)) {
             device = new Switch();
-            StringTokenizer strTok = initDeviceChar(scan, device);
+            Field[] fields = new Field[7];
+            StringTokenizer strTok = initDeviceChar(scan, fields);
             temp = strTok.nextToken();
             if (!temp.equals(" "))
-                ((Router)device).setDataRate(Integer.parseInt(temp.substring(1,temp.length()-1)));
+                fields[5].setValue(temp.substring(1,temp.length()-1));
             temp = strTok.nextToken();
             if (!temp.equals("  "))
-                ((Switch) device).setNumberOfPorts(Integer.parseInt(temp.substring(1,temp.length()-1)));
+                fields[6].setValue(temp.substring(1,temp.length()-1));
+            device.feelAllFields(fields);
         }
         if (classFromStream.equals(WifiRouter.class)){
             device = new WifiRouter();
-            StringTokenizer strTok = initDeviceChar(scan, device);
+            Field[] fields = new Field[7];
+            StringTokenizer strTok = initDeviceChar(scan, fields);
             temp = strTok.nextToken();
             if (!temp.equals(" "))
-                ((Router)device).setDataRate(Integer.parseInt(temp.substring(1,temp.length()-1)));
+                fields[5].setValue(temp.substring(1,temp.length()-1));
             temp = strTok.nextToken();
             if (!temp.equals(" "))
-                ((WifiRouter)device).setSecurityProtocol(temp.substring(1,temp.length()-1));
+                fields[6].setValue(temp.substring(1,temp.length()-1));
+            device.feelAllFields(fields);
         }
         if (classFromStream.equals(Battery.class)){
             device = new Battery();
-            StringTokenizer strTok = initDeviceChar(scan, device);
+            Field[] fields = new Field[6];
+            StringTokenizer strTok = initDeviceChar(scan, fields);
             temp = strTok.nextToken();
             if (!temp.equals(" "))
-                ((Battery)device).setChargeVolume(Integer.parseInt(temp.substring(1,temp.length()-1)));
+                fields[5].setValue(temp.substring(1,temp.length()-1));
+            device.feelAllFields(fields);
         }
 
         return device;
@@ -159,36 +144,37 @@ import java.util.logging.Logger;
             throw e;
         }
 
+        Field[] fields = device.getAllFields();
         DataOutput dataOutput = new DataOutputStream(outputStream);
         dataOutput.writeUTF(device.getClass().getCanonicalName());
-        dataOutput.writeInt(device.getIn());
-        dataOutput.writeUTF(device.getType());
-        if (device.getModel() == null)
-            dataOutput.writeUTF("\n");
-        else
-            dataOutput.writeUTF(device.getModel());
-        if (device.getManufacturer() == null)
-            dataOutput.writeUTF("\n");
-        else
-            dataOutput.writeUTF(device.getManufacturer());
-        if (device.getProductionDate() == null)
-            dataOutput.writeLong(-1);
-        else
-            dataOutput.writeLong(device.getProductionDate().getTime());
+        dataOutput.writeInt((Integer) fields[0].getValue());
+
+         for (int i = 1; i < fields.length; i++) {
+             if (fields[i].getValue() == null)
+                 if (i == 4)
+                     dataOutput.writeLong(-1);
+             else
+                     dataOutput.writeUTF("\n");
+             else
+                 if (i == 4)
+                     dataOutput.writeLong((Long)fields[i].getValue());
+                 else
+                     dataOutput.writeUTF((String) fields[i].getValue());
+         }
+
         if (Router.class.isInstance(device)){
-            dataOutput.writeInt(((Router)device).getDataRate());
+            dataOutput.writeInt((Integer) fields[5].getValue());
             if (Switch.class.isInstance(device))
-                dataOutput.writeInt(((Switch)device).getNumberOfPorts());
+                dataOutput.writeInt((Integer) fields[6].getValue());
             if (WifiRouter.class.isInstance(device)){
-                if (((WifiRouter)device).getSecurityProtocol() == null)
+                if (fields[6].getValue() == null)
                     dataOutput.writeUTF("\n");
                 else
-                    dataOutput.writeUTF(((WifiRouter)device).getSecurityProtocol());
+                    dataOutput.writeUTF((String) fields[6].getValue());
             }
-
         }
         if (Battery.class.isInstance(device)){
-            dataOutput.writeInt(((Battery)device).getChargeVolume());
+            dataOutput.writeInt((Integer) fields[5].getValue());
         }
     }
 
@@ -217,27 +203,31 @@ import java.util.logging.Logger;
 
         if (classFromStream.equals(Router.class)){
             device = new Router();
-            initDevice(dataInput, device);
-            ((Router)device).setDataRate(dataInput.readInt());
+            Field[] fields = new Field[6];
+            initDevice(dataInput, fields);
+            fields[5].setValue(dataInput.readInt());
         }
         if (classFromStream.equals(Switch.class)) {
             device = new Switch();
-            initDevice(dataInput, device);
-            ((Router)device).setDataRate(dataInput.readInt());
-            ((Switch) device).setNumberOfPorts(dataInput.readInt());
+            Field[] fields = new Field[7];
+            initDevice(dataInput, fields);
+            fields[5].setValue(dataInput.readInt());
+            fields[6].setValue(dataInput.readInt());
         }
         if (classFromStream.equals(WifiRouter.class)){
             device = new WifiRouter();
-            initDevice(dataInput, device);
-            ((Router)device).setDataRate(dataInput.readInt());
+            Field[] fields = new Field[7];
+            initDevice(dataInput, fields);
+            fields[5].setValue(dataInput.readInt());
             s = dataInput.readUTF();
             if (!s.equals("\n"))
-                ((WifiRouter)device).setSecurityProtocol(s);
+                fields[6].setValue(s);
         }
         if (classFromStream.equals(Battery.class)){
             device = new Battery();
-            initDevice(dataInput, device);
-            ((Battery)device).setChargeVolume(dataInput.readInt());
+            Field[] fields = new Field[6];
+            initDevice(dataInput, fields);
+            fields[5].setValue(dataInput.readInt());
         }
 
         return device;
@@ -429,46 +419,41 @@ import java.util.logging.Logger;
         return rack;
     }
 
-    void initDevice(DataInput dataInput, Device device) throws IOException{
+    void initDevice(DataInput dataInput, Field[] fields) throws IOException{
         String s;
 
-        int i = dataInput.readInt();
-        if (i > 0)
-            device.setIn(i);
-        dataInput.readUTF();
-        s = dataInput.readUTF();
-        if (!s.equals("\n"))
-            device.setModel(s);
-        s = dataInput.readUTF();
-        if (!s.equals("\n"))
-            device.setManufacturer(s);
+        int in = dataInput.readInt();
+        if (in > 0)
+            fields[0].setValue(in);
+        for (int i = 1; i < 4; i++) {
+            s = dataInput.readUTF();
+            if (!s.equals("\n"))
+                fields[i].setValue(s);
+        }
+
         Long l = dataInput.readLong();
         if (l != -1) {
-            Date b = new Date();
-            b.setTime(l);
-            device.setProductionDate(b);
+            fields[4].setValue(l);
         }
     }
 
-    StringTokenizer initDeviceChar(String s, Device device) throws IOException{
+    StringTokenizer initDeviceChar(String s, Field[] fields) throws IOException{
+
         int position = s.indexOf("]");
-        int i = Integer.parseInt(s.substring(1,position));
-        if (i > 0)
-            device.setIn(i);
+        int in = Integer.parseInt(s.substring(1,position));
+        if (in > 0)
+            fields[0].setValue(in);
         String sWithoutIn = s.substring(position + 1);
         StringTokenizer sT = new StringTokenizer(sWithoutIn, "|");
         String temp;
-        temp = sT.nextToken();
-        temp = sT.nextToken();
-        if (!temp.equals(" "))
-            device.setModel(temp.substring(1,temp.length()-1));
-        temp = sT.nextToken();
-        if (!temp.equals(" "))
-            device.setManufacturer(temp.substring(1,temp.length()-1));
-        temp = sT.nextToken();
-        if (!temp.trim().equals("-1")) {
-            Date b = new Date(Long.parseLong(temp.trim()));
-            device.setProductionDate(b);
+
+        for (int i = 1; i < 5; i++){
+            temp = sT.nextToken();
+            if (!temp.equals(" ") && i != 4)
+                fields[i].setValue(temp.substring(1,temp.length()-1));
+            else
+                if (!temp.trim().equals("-1") && i == 4)
+                    fields[i].setValue(temp.substring(1,temp.length()-1));
         }
 
         return sT;
