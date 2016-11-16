@@ -71,20 +71,18 @@ import java.util.logging.Logger;
 
     public void feelAllFields(Field[] fields) {
         if (fields[0].getValue() != null)
-        if ((Integer)fields[0].getValue() > 0)
-        setIn((Integer) fields[0].getValue());
-        if (fields[2].getValue() != null)
+            if ((Integer)fields[0].getValue() > 0)
+                 setIn((Integer) fields[0].getValue());
+
         setManufacturer((String) fields[2].getValue());
-        if (fields[3].getValue() != null)
         setModel((String) fields[3].getValue());
-        if (fields[4].getValue() != null)
         setProductionDate((Date) fields[4].getValue());
     }
 
     public Field[] getAllFields(){
-     Field[] fields = new Field[5];
+        Field[] fields = new Field[5];
 
-       fields[0] = new Field(Integer.class, getIn());
+        fields[0] = new Field(Integer.class, getIn());
 
         fields[1] = new Field(Class.class, getType());
 

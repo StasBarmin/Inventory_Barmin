@@ -18,6 +18,7 @@ import static java.util.Arrays.fill;
  */
  public class ServiceImpl implements Service   {
     static protected Logger LOGGER = Logger.getLogger(ServiceImpl.class.getName());
+    private Utilities util = new Utilities();
 
     public DeviceService getDeviceService(){
         DeviceService ds = new DeviceServiceImpl();
@@ -30,12 +31,10 @@ import static java.util.Arrays.fill;
     }
 
     public void sortByIN(Device[] devices)  {
-        Utilities util = new Utilities();
         util.sortByIN(devices);
     }
 
     public void filtrateByType(Device[] devices, String type) {
-       Utilities util = new Utilities();
         util.filtrateByType(devices, type);
     }
 }

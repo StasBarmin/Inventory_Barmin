@@ -355,8 +355,6 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
 
         DeviceServiceImpl dsi = new DeviceServiceImpl();
         com.netcracker.edu.location.impl.ServiceImpl locServImpl = new com.netcracker.edu.location.impl.ServiceImpl();
-//        DataOutput dout = new DataOutputStream(outputStream);
-
         DataOutput dataOutput = new DataOutputStream(outputStream);
 
         locServImpl.outputLocation(rack.getLocation(), outputStream);
