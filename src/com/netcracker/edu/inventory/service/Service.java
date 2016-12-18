@@ -23,6 +23,13 @@ public interface Service {
     RackService getRackService();
 
     /**
+     * Return ConnectionService implementation
+     *
+     * @return implementation of ConnectionService interface
+     */
+    ConnectionService getConnectionService();
+
+    /**
      * Sort array of Device-s by identification number.
      *
      * @param devices - array of Device-s, that need to be sorted

@@ -2,7 +2,9 @@ package com.netcracker.edu.inventory.model.impl;
 
 import com.netcracker.edu.inventory.model.Device;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by barmin on 07.10.2016.
@@ -19,17 +21,27 @@ public class Router extends AbstractDevice implements Device {
     }
 
     public void feelAllFields(Field[] fields) {
-        super.feelAllFields(fields);
-        if (fields[5].getValue() != null)
-        setDataRate((Integer) fields[5].getValue());
+        fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
     }
 
     public Field[] getAllFields(){
-        Field[] fields;
+        Field[] fields = new Field[6];
 
-        fields = Arrays.copyOf(super.getAllFields(), 6);
-        fields[5] = new Field(Integer.class,getDataRate());
+        return getAllFieldsList().toArray(fields);
+    }
 
+    public void fillAllFields(List<Field> fields){
+        int size = super.getAllFieldsList().size();
+
+        super.fillAllFields(fields);
+        if (fields.get(size).getValue() != null)
+            setDataRate((Integer) fields.get(size).getValue());
+    }
+
+    public List<Field> getAllFieldsList(){
+        List<Field> fields = super.getAllFieldsList();
+
+        fields.add(new Field(Integer.class, getDataRate()));
         return fields;
     }
 }

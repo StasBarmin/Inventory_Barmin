@@ -4,7 +4,6 @@ import com.netcracker.edu.inventory.model.Device;
 import com.netcracker.edu.inventory.service.DeviceService;
 
 import java.io.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -14,7 +13,7 @@ import java.util.logging.Logger;
  */
  class DeviceServiceImpl implements DeviceService{
     static protected Logger LOGGER = Logger.getLogger(DeviceServiceImpl.class.getName());
-    private DeviceValidator deviceValidator = new DeviceValidator();
+    private Validator validator = new Validator();
     private InputOutputOperations inputOutputOperations = new InputOutputOperations();
 
     public boolean isCastableTo(Device device, Class clazz) {
@@ -25,11 +24,11 @@ import java.util.logging.Logger;
     }
 
     public boolean isValidDeviceForInsertToRack(Device device){
-        return deviceValidator.isValidDeviceForInsertToRack(device);
+        return validator.isValidDeviceForInsertToRack(device);
     }
 
     public boolean isValidDeviceForWriteToStream(Device device){
-        return deviceValidator.isValidDeviceForWriteToStream(device);
+        return validator.isValidDeviceForWriteToStream(device);
     }
 
     public void writeDevice(Device device, Writer writer) throws IOException{

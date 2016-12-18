@@ -1,6 +1,7 @@
 package com.netcracker.edu.inventory.service.impl;
 
 import com.netcracker.edu.inventory.model.Device;
+import com.netcracker.edu.inventory.service.ConnectionService;
 import com.netcracker.edu.inventory.service.DeviceService;
 import com.netcracker.edu.inventory.service.RackService;
 import com.netcracker.edu.inventory.service.Service;
@@ -23,6 +24,11 @@ import static java.util.Arrays.fill;
     public DeviceService getDeviceService(){
         DeviceService ds = new DeviceServiceImpl();
         return ds;
+    }
+
+    public ConnectionService getConnectionService(){
+        ConnectionService cs = new ConnectionServiceImpl();
+        return cs;
     }
 
     public RackService getRackService(){

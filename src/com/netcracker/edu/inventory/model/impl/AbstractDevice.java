@@ -3,7 +3,10 @@ package com.netcracker.edu.inventory.model.impl;
 import com.netcracker.edu.inventory.model.Device;
 import com.netcracker.edu.inventory.model.FeelableEntity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,27 +73,39 @@ import java.util.logging.Logger;
     }
 
     public void feelAllFields(Field[] fields) {
-        if (fields[0].getValue() != null)
-            if ((Integer)fields[0].getValue() > 0)
-                 setIn((Integer) fields[0].getValue());
 
-        setManufacturer((String) fields[2].getValue());
-        setModel((String) fields[3].getValue());
-        setProductionDate((Date) fields[4].getValue());
+        fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
+
     }
 
     public Field[] getAllFields(){
         Field[] fields = new Field[5];
 
-        fields[0] = new Field(Integer.class, getIn());
+        return getAllFieldsList().toArray(fields);
+    }
 
-        fields[1] = new Field(Class.class, getType());
+    public void fillAllFields(List<Field> fields){
+        if (fields.get(0).getValue() != null)
+            if ((Integer)fields.get(0).getValue() > 0)
+                setIn((Integer) fields.get(0).getValue());
 
-        fields[2] = new Field(String.class, getManufacturer());
+        setManufacturer((String) fields.get(2).getValue());
+        setModel((String) fields.get(3).getValue());
+        setProductionDate((Date) fields.get(4).getValue());
+    }
 
-        fields[3] = new Field(String.class, getModel());
+    public List<Field> getAllFieldsList(){
+        List<Field> fields = new ArrayList<Field>();
 
-        fields[4] = new Field(Date.class,getProductionDate());
+        fields.add(new Field(Integer.class, getIn()));
+
+        fields.add(new Field(Class.class, getType()));
+
+        fields.add(new Field(String.class, getManufacturer()));
+
+        fields.add(new Field(String.class, getModel()));
+
+        fields.add(new Field(Date.class,getProductionDate()));
 
         return fields;
     }

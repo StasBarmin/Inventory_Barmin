@@ -57,6 +57,9 @@ import static java.util.Arrays.fill;
     }
 
      void filtrateByType(Device[] devices, String type) {
+         if (devices == null)
+             return;
+
         for (int i = 0; i < devices.length; i++) {
             if (devices[i] != null) {
                 if (devices[i].getType() != null) {

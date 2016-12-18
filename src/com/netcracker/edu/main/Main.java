@@ -10,9 +10,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-    Device d = new Battery();
-       Date e = d.getProductionDate();
-        System.out.println(e);
+   Class c = Device.class;
+        c = Device[].class;
 
     }
 
