@@ -58,15 +58,15 @@ public class WifiRouter extends Router implements Device {
         this.wireConnection = wireConnection;
     }
 
-    public void feelAllFields(Field[] fields) {
-        fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
-    }
-
-    public Field[] getAllFields(){
-        Field[] fields = new Field[7];
-
-        return getAllFieldsList().toArray(fields);
-    }
+//    public void feelAllFields(Field[] fields) {
+//        fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
+//    }
+//
+//    public Field[] getAllFields(){
+//        Field[] fields = new Field[7];
+//
+//        return getAllFieldsList().toArray(fields);
+//    }
 
     public void fillAllFields(List<Field> fields){
         int size = super.getAllFieldsList().size();

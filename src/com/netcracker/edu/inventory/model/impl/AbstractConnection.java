@@ -22,14 +22,15 @@ abstract class AbstractConnection <A extends Device, B extends Device> implement
         this.status = status;
     }
 
+    @Deprecated
     public void feelAllFields(Field[] fields) {
-
         fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
-
     }
 
+    @Deprecated
     public Field[] getAllFields(){
-        Field[] fields = new Field[1];
+
+        Field[] fields = new Field[0];
 
         return getAllFieldsList().toArray(fields);
     }

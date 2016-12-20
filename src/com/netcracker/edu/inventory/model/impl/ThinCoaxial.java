@@ -21,18 +21,6 @@ public class ThinCoaxial<T extends Device> extends AbstractConnection<T, T> impl
     }
 
     @Override
-    public void feelAllFields(Field[] fields) {
-        fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
-    }
-
-    @Override
-    public Field[] getAllFields() {
-        Field[] fields = new Field[3];
-
-        return getAllFieldsList().toArray(fields);
-    }
-
-    @Override
     public void fillAllFields(List<Field> fields) {
         int size = super.getAllFieldsList().size();
 

@@ -20,15 +20,6 @@ public class Router extends AbstractDevice implements Device {
         this.dataRate = dataRate;
     }
 
-    public void feelAllFields(Field[] fields) {
-        fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
-    }
-
-    public Field[] getAllFields(){
-        Field[] fields = new Field[6];
-
-        return getAllFieldsList().toArray(fields);
-    }
 
     public void fillAllFields(List<Field> fields){
         int size = super.getAllFieldsList().size();

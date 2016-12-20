@@ -42,15 +42,6 @@ abstract class AbstractOneToOneConnection<A extends Device, B extends Device> ex
         this.BPoint = device;
     }
 
-    public void feelAllFields(Field[] fields) {
-        fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
-    }
-
-    public Field[] getAllFields(){
-        Field[] fields = new Field[3];
-
-        return getAllFieldsList().toArray(fields);
-    }
 
     public void fillAllFields(List<Field> fields){
         int size = super.getAllFieldsList().size();

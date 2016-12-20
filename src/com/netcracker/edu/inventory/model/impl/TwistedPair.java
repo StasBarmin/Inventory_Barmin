@@ -26,16 +26,6 @@ public class TwistedPair<A extends Device, B extends Device> extends AbstractOne
         this.BPointConnectorType = ConnectorType.RJ45;
     }
 
-    public void feelAllFields(Field[] fields) {
-        fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
-    }
-
-    public Field[] getAllFields() {
-        Field[] fields = new Field[5];
-
-        return getAllFieldsList().toArray(fields);
-    }
-
     public void fillAllFields(List<Field> fields) {
         int size = super.getAllFieldsList().size();
 

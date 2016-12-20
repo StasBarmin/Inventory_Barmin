@@ -64,16 +64,6 @@ public class Switch extends Router implements Device {
         return Arrays.asList(portsConnections);
     }
 
-    public void feelAllFields(Field[] fields) {
-        fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
-    }
-
-    public Field[] getAllFields(){
-        Field[] fields = new Field[7];
-
-        return getAllFieldsList().toArray(fields);
-    }
-
     public void fillAllFields(List<Field> fields){
         int size = super.getAllFieldsList().size();
 

@@ -25,17 +25,6 @@ public class OpticFiber<A extends Device, B extends Device> extends AbstractOneT
         this.BPointConnectorType = ConnectorType.FiberConnector_FC;
     }
 
-    @Override
-    public void feelAllFields(Field[] fields) {
-        fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
-    }
-
-    @Override
-    public Field[] getAllFields() {
-        Field[] fields = new Field[5];
-
-        return getAllFieldsList().toArray(fields);
-    }
 
     @Override
     public void fillAllFields(List<Field> fields) {

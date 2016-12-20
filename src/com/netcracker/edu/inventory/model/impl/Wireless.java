@@ -27,18 +27,6 @@ public class Wireless<A extends Device, B extends Device>  extends AbstractConne
     }
 
     @Override
-    public void feelAllFields(Field[] fields) {
-        fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
-    }
-
-    @Override
-    public Field[] getAllFields() {
-        Field[] fields = new Field[6];
-
-        return getAllFieldsList().toArray(fields);
-    }
-
-    @Override
     public void fillAllFields(List<Field> fields) {
         int size = super.getAllFieldsList().size();
 

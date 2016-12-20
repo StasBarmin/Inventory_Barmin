@@ -72,15 +72,15 @@ import java.util.logging.Logger;
         this.productionDate = productionDate;
     }
 
+    @Deprecated
     public void feelAllFields(Field[] fields) {
-
         fillAllFields(new ArrayList<Field>(Arrays.asList(fields)));
-
     }
 
+    @Deprecated
     public Field[] getAllFields(){
-        Field[] fields = new Field[5];
 
+        Field[] fields = new Field[0];
         return getAllFieldsList().toArray(fields);
     }
 
