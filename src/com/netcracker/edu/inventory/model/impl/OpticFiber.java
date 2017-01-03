@@ -31,7 +31,7 @@ public class OpticFiber<A extends Device, B extends Device> extends AbstractOneT
         int size = super.getAllFieldsList().size();
 
         super.fillAllFields(fields);
-        if (fields.get(0).getValue() != null)
+        if (fields.get(size).getValue() != null)
             setLength((Integer) fields.get(size).getValue());
         if (mode == Mode.need_init)
             this.mode = Mode.valueOf(fields.get(size + 1).getValue().toString());

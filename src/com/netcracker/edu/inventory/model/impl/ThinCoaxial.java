@@ -51,6 +51,11 @@ public class ThinCoaxial<T extends Device> extends AbstractConnection<T, T> impl
     }
 
     @Override
+    public int getMaxSize() {
+        return maxSize;
+    }
+
+    @Override
     public boolean addDevice(T device) {
         return devices.add(device);
     }
@@ -79,11 +84,6 @@ public class ThinCoaxial<T extends Device> extends AbstractConnection<T, T> impl
             return 0;
         else
             return devices.size();
-    }
-
-    @Override
-    public int getMaxSize() {
-        return maxSize;
     }
 
 }

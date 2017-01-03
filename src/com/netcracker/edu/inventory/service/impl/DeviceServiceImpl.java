@@ -46,11 +46,11 @@ import java.util.logging.Logger;
     public Device inputDevice(InputStream inputStream) throws IOException, ClassNotFoundException{
         return inputOutputOperations.inputDevice(inputStream);
     }
-
+    @Deprecated
     public void serializeDevice(Device device, OutputStream outputStream) throws IOException{
         inputOutputOperations.serializeDevice(device, outputStream);
     }
-
+    @Deprecated
     public Device deserializeDevice(InputStream inputStream) throws IOException, ClassCastException, ClassNotFoundException{
         return inputOutputOperations.deserializeDevice(inputStream);
     }

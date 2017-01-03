@@ -29,11 +29,11 @@ class RackServiceImpl implements RackService{
     public Rack inputRack(InputStream inputStream) throws IOException, ClassNotFoundException {
         return inputOutputOperations.inputRack(inputStream);
     }
-
+    @Deprecated
     public void serializeRack(Rack rack, OutputStream outputStream) throws IOException{
         inputOutputOperations.serializeRack(rack, outputStream);
     }
-
+    @Deprecated
     public Rack deserializeRack(InputStream inputStream) throws IOException, ClassCastException, ClassNotFoundException{
         return inputOutputOperations.deserializeRack(inputStream);
     }

@@ -1,6 +1,8 @@
 package com.netcracker.edu.inventory.service.impl;
 
 import com.netcracker.edu.inventory.model.Device;
+import com.netcracker.edu.inventory.model.FeelableEntity;
+import com.netcracker.edu.inventory.model.impl.*;
 
 import static java.util.Arrays.fill;
 
@@ -74,5 +76,34 @@ import static java.util.Arrays.fill;
                 }
             }
         }
+    }
+
+    static FeelableEntity createDevice_Connection(Class clazz){
+
+        if (clazz.equals(Router.class))
+           return new Router();
+
+        if (clazz.equals(Switch.class))
+            return new Switch();
+
+        if (clazz.equals(WifiRouter.class))
+            return new WifiRouter();
+
+        if (clazz.equals(Battery.class))
+            return new Battery();
+
+        if (clazz.equals(TwistedPair.class))
+            return new TwistedPair();
+
+        if (clazz.equals(OpticFiber.class))
+            return new OpticFiber();
+
+        if (clazz.equals(Wireless.class))
+            return new Wireless();
+
+        if (clazz.equals(ThinCoaxial.class))
+            return new ThinCoaxial();
+
+        return null;
     }
 }

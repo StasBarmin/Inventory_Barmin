@@ -3,6 +3,7 @@ package com.netcracker.edu.inventory.model.impl;
 import com.netcracker.edu.inventory.exception.DeviceValidationException;
 import com.netcracker.edu.inventory.model.Device;
 import com.netcracker.edu.inventory.model.Rack;
+import com.netcracker.edu.inventory.model.RackPrimaryKey;
 import com.netcracker.edu.location.Location;
 
 import java.util.logging.Logger;
@@ -163,6 +164,16 @@ import java.util.logging.Level;
         }
 
         return devs;
+    }
+
+    @Override
+    public boolean isPrimaryKey() {
+        return false;
+    }
+
+    @Override
+    public RackPrimaryKey getPrimaryKey() {
+        return null;
     }
 }
 

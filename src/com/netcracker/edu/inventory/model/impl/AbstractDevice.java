@@ -1,6 +1,7 @@
 package com.netcracker.edu.inventory.model.impl;
 
 import com.netcracker.edu.inventory.model.Device;
+import com.netcracker.edu.inventory.model.DevicePrimaryKey;
 import com.netcracker.edu.inventory.model.FeelableEntity;
 
 import java.util.ArrayList;
@@ -108,5 +109,36 @@ import java.util.logging.Logger;
         fields.add(new Field(Date.class,getProductionDate()));
 
         return fields;
+    }
+
+    @Override
+    public boolean isPrimaryKey() {
+        return false;
+    }
+
+    @Override
+    public DevicePrimaryKey getPrimaryKey() {
+        return null;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o == null){
+            NullPointerException e = new NullPointerException();
+            LOGGER.log(Level.SEVERE, "Argument is null. Method compareTo", e);
+            throw e;
+        }
+        if (!Device.class.isInstance(o)){
+            ClassCastException e = new ClassCastException();
+            LOGGER.log(Level.SEVERE, "Argument is not an instance of Device. Method compareTo", e);
+            throw e;
+        }
+
+        if (((Device)o).getIn() < in)
+            return 1;
+        else if (((Device)o).getIn() > in)
+            return -1;
+        else
+            return 0;
     }
 }

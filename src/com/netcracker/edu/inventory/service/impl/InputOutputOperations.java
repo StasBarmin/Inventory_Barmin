@@ -3,6 +3,7 @@ package com.netcracker.edu.inventory.service.impl;
 import com.netcracker.edu.inventory.exception.DeviceValidationException;
 import com.netcracker.edu.inventory.model.Connection;
 import com.netcracker.edu.inventory.model.Device;
+import com.netcracker.edu.inventory.model.FeelableEntity;
 import com.netcracker.edu.inventory.model.Rack;
 import com.netcracker.edu.inventory.model.impl.*;
 import com.netcracker.edu.location.Location;
@@ -140,21 +141,9 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
 
         Class classFromStream = classFromStream(scan);
 
-        Device device = null;
+        Device device = (Device) Utilities.createDevice_Connection(classFromStream);
         scan = readString(reader);
         String temp;
-
-        if (classFromStream.equals(Router.class))
-            device = new Router();
-
-        if (classFromStream.equals(Switch.class))
-            device = new Switch();
-
-        if (classFromStream.equals(WifiRouter.class))
-            device = new WifiRouter();
-
-        if (classFromStream.equals(Battery.class))
-            device = new Battery();
 
         List<Field> fields = device.getAllFieldsList();
         StringTokenizer strTok = initDeviceChar(scan, fields);
@@ -206,21 +195,9 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
 
         Class classFromStream = classFromStream(scan);
 
-        Connection connection = null;
+        Connection connection = (Connection) Utilities.createDevice_Connection(classFromStream);
         scan = readString(reader);
         String temp;
-
-        if (classFromStream.equals(TwistedPair.class))
-            connection = new TwistedPair();
-
-        if (classFromStream.equals(OpticFiber.class))
-            connection = new OpticFiber();
-
-        if (classFromStream.equals(Wireless.class))
-            connection = new Wireless();
-
-        if (classFromStream.equals(ThinCoaxial.class))
-            connection = new ThinCoaxial();
 
         List<Field> fields = connection.getAllFieldsList();
         StringTokenizer strTok = new StringTokenizer(scan, "|");
@@ -321,22 +298,11 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
 
         classFromStream = classFromStream(s);
 
-        Device device = null;
+        Device device = (Device) Utilities.createDevice_Connection(classFromStream);
         int v_int;
         String v_string;
         Long v_long;
 
-        if (classFromStream.equals(Router.class))
-            device = new Router();
-
-        if (classFromStream.equals(Switch.class))
-            device = new Switch();
-
-        if (classFromStream.equals(WifiRouter.class))
-            device = new WifiRouter();
-
-        if (classFromStream.equals(Battery.class))
-            device = new Battery();
 
         List<Field> fields = device.getAllFieldsList();
 
@@ -387,21 +353,9 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
 
        classFromStream = classFromStream(s);
 
-        Connection connection = null;
+        Connection connection = (Connection) Utilities.createDevice_Connection(classFromStream);
         int v_int;
         String v_string;
-
-        if (classFromStream.equals(TwistedPair.class))
-            connection = new TwistedPair();
-
-        if (classFromStream.equals(OpticFiber.class))
-            connection = new OpticFiber();
-
-        if (classFromStream.equals(Wireless.class))
-            connection = new Wireless();
-
-        if (classFromStream.equals(ThinCoaxial.class))
-            connection = new ThinCoaxial();
 
         List<Field> fields = connection.getAllFieldsList();
 
@@ -410,12 +364,13 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
             if (fields.get(i).getType() == Integer.class) {
                 v_int = dataInput.readInt();
                 fields.get(i).setValue(v_int);
-            } else if (Collection.class.isAssignableFrom(fields.get(i).getType())) {
-                int size = dataInput.readInt();
-                if (List.class.isAssignableFrom(fields.get(i).getType()))
-                    fields.get(i).setValue(new ArrayList<Device>(size));
-                else
-                    fields.get(i).setValue(new HashSet<Device>(size));
+            } else
+                if (Collection.class.isAssignableFrom(fields.get(i).getType())) {
+                    int size = dataInput.readInt();
+                    if (List.class.isAssignableFrom(fields.get(i).getType()))
+                        fields.get(i).setValue(new ArrayList<Device>(size));
+                    else
+                     fields.get(i).setValue(new HashSet<Device>(size));
             } else {
                 v_string = dataInput.readUTF();
                 if (!v_string.equals("\n"))
@@ -427,7 +382,7 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
 
         return connection;
     }
-
+    @Deprecated
     void serializeDevice(Device device, OutputStream outputStream) throws IOException {
         if (device == null)
             return;
@@ -438,7 +393,7 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
         ObjectOutputStream oos = new ObjectOutputStream(outputStream);
         oos.writeObject(device);
     }
-
+    @Deprecated
     Device deserializeDevice(InputStream inputStream) throws IOException, ClassCastException, ClassNotFoundException {
         if (inputStream == null) {
             missingInputStream();
@@ -564,7 +519,7 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
 
         return rack;
     }
-
+    @Deprecated
     public void serializeRack(Rack rack, OutputStream outputStream) throws IOException {
         if (rack == null)
             return;
@@ -575,7 +530,7 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
         ObjectOutputStream oos = new ObjectOutputStream(outputStream);
         oos.writeObject(rack);
     }
-
+    @Deprecated
     public Rack deserializeRack(InputStream inputStream) throws IOException, ClassCastException, ClassNotFoundException {
         if (inputStream == null) {
             missingInputStream();

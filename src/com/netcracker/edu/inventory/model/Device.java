@@ -1,5 +1,6 @@
 package com.netcracker.edu.inventory.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Date;
  *
  * Created by makovetskyi on 05.10.2016.
  */
-public interface Device extends FeelableEntity {
+public interface Device extends FeelableEntity, Unique<DevicePrimaryKey>, Serializable, Comparable {
     int getIn();
     void setIn(int in);
     String getType();
@@ -18,4 +19,5 @@ public interface Device extends FeelableEntity {
     void setModel(String model);
     Date getProductionDate();
     void setProductionDate(Date productionDate);
+
 }
