@@ -118,7 +118,10 @@ import java.util.logging.Logger;
 
     @Override
     public DevicePrimaryKey getPrimaryKey() {
-        return null;
+        if (in != 0)
+            return new DevicePK(in);
+        else
+            return null;
     }
 
     @Override

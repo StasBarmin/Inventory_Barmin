@@ -173,7 +173,10 @@ import java.util.logging.Level;
 
     @Override
     public RackPrimaryKey getPrimaryKey() {
-        return null;
+        if (location != null)
+            return new RackPK(location);
+        else
+            return null;
     }
 }
 

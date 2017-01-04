@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 abstract class AbstractConnection <A extends Device, B extends Device> implements Connection<A,B>, FeelableEntity, java.io.Serializable  {
     String status = Connection.PLANED;
     int serialNumber;
+    Trunk trunk;
     static protected Logger LOGGER = Logger.getLogger(RackArrayImpl.class.getName());
 
     public String getStatus() {
@@ -50,17 +51,20 @@ abstract class AbstractConnection <A extends Device, B extends Device> implement
 
     @Override
     public ConnectionPrimaryKey getPrimaryKey() {
-        return null;
+        if (serialNumber != 0 && trunk != null)
+            return new ConnectionPK(serialNumber, trunk);
+        else
+            return null;
     }
 
     @Override
     public Trunk getTrunk() {
-        return null;
+        return trunk;
     }
 
     @Override
     public void setTrunk(Trunk trunk) {
-
+        this.trunk = trunk;
     }
 
     @Override
