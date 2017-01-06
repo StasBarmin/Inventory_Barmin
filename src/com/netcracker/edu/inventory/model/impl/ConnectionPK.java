@@ -19,7 +19,7 @@ public class ConnectionPK implements ConnectionPrimaryKey {
     final Trunk trunk;
     static protected Logger LOGGER = Logger.getLogger(ConnectionPK.class.getName());
 
-    public ConnectionPK(int serialNumber, Trunk trunk) {
+    public ConnectionPK(Trunk trunk, int serialNumber) {
         this.serialNumber = serialNumber;
         this.trunk = trunk;
     }

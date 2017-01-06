@@ -52,7 +52,7 @@ abstract class AbstractConnection <A extends Device, B extends Device> implement
     @Override
     public ConnectionPrimaryKey getPrimaryKey() {
         if (serialNumber != 0 && trunk != null)
-            return new ConnectionPK(serialNumber, trunk);
+            return new ConnectionPK(trunk, serialNumber);
         else
             return null;
     }
