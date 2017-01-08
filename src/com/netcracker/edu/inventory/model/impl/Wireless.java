@@ -111,7 +111,7 @@ public class Wireless<A extends Device, B extends Device>  extends AbstractConne
             this.BPoints = (B[]) new Device[0];
         else
             if (BPoints == null)
-                this.BPoints = (B[])devices.toArray();
+                this.BPoints = devices.toArray((B[]) new Device[0]);
             else
                 this.BPoints = devices.toArray(BPoints);
     }

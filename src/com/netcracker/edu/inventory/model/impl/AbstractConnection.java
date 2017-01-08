@@ -105,6 +105,7 @@ abstract class AbstractConnection <A extends Device, B extends Device> implement
 
         setStatus((String) fields.get(0).getValue());
         setSerialNumber((Integer)fields.get(1).getValue());
+        setTrunk((Trunk)fields.get(2).getValue());
     }
 
     public List<Field> getAllFieldsList(){
@@ -112,6 +113,7 @@ abstract class AbstractConnection <A extends Device, B extends Device> implement
 
         fields.add(new Field(String.class, getStatus()));
         fields.add(new Field(Integer.class, getSerialNumber()));
+        fields.add(new Field(Trunk.class, getTrunk()));
 
         return fields;
     }

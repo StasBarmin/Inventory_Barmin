@@ -57,6 +57,7 @@ import static java.util.Arrays.fill;
 
             for (int i = 0; i < fields.size(); i++) {
                 if (Unique.class.isAssignableFrom(fields.get(i).getType())){
+                    if (fields.get(i).getValue() != null)
                     fields.get(i).setValue(((Unique)fields.get(i).getValue()).getPrimaryKey());
                 }
                 if (Collection.class.isAssignableFrom(fields.get(i).getType())) {
