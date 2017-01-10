@@ -107,7 +107,9 @@ public class DevicePK implements DevicePrimaryKey {
     }
 
     public boolean equals(Object obj) {
-        return (in == ((DevicePK)obj).getIn());
+        if (obj instanceof DevicePrimaryKey)
+            return (in == ((DevicePK)obj).getIn());
+        else return false;
     }
 
     void wrongPKMethod(){

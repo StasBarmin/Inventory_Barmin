@@ -96,7 +96,10 @@ public class ConnectionPK implements ConnectionPrimaryKey {
     }
 
     public boolean equals(Object obj) {
-        return (trunk.equals(((ConnectionPK)obj).getTrunk()) && serialNumber == ((ConnectionPK)obj).getSerialNumber());
+        if (obj instanceof ConnectionPrimaryKey)
+            return (trunk.equals(((ConnectionPK)obj).getTrunk()) && serialNumber == ((ConnectionPK)obj).getSerialNumber());
+        else
+            return false;
     }
 
     void wrongPKMethod(){

@@ -1,6 +1,8 @@
 package com.netcracker.edu.inventory.service.impl;
 
 import com.netcracker.edu.inventory.model.*;
+import com.netcracker.edu.inventory.model.impl.ConnectionPK;
+import com.netcracker.edu.inventory.model.impl.DevicePK;
 import com.netcracker.edu.inventory.model.impl.Switch;
 import com.netcracker.edu.inventory.model.impl.Wireless;
 import com.netcracker.edu.inventory.service.ConnectionService;
@@ -58,7 +60,10 @@ import static java.util.Arrays.fill;
             for (int i = 0; i < fields.size(); i++) {
                 if (Unique.class.isAssignableFrom(fields.get(i).getType())){
                     if (fields.get(i).getValue() != null)
-                    fields.get(i).setValue(((Unique)fields.get(i).getValue()).getPrimaryKey());
+                        if (fields.get(i).getValue() instanceof Unique.PrimaryKey)
+                            fields.get(i).setValue(copyPK(((Unique)fields.get(i).getValue()).getPrimaryKey()));
+                        else
+                            fields.get(i).setValue(((Unique)fields.get(i).getValue()).getPrimaryKey());
                 }
                 if (Collection.class.isAssignableFrom(fields.get(i).getType())) {
                     int size;
@@ -67,7 +72,10 @@ import static java.util.Arrays.fill;
                         connections = new Connection[size];
                         for (int j = 0; j < size; j++) {
                             if(((Connection[]) fields.get(i).getValue())[j] != null)
-                            connections[j] = (Connection) ((Connection[]) fields.get(i).getValue())[j].getPrimaryKey();
+                                if (fields.get(i).getValue() instanceof Unique.PrimaryKey)
+                                    connections[j] = (Connection)copyPK(((Unique)fields.get(i).getValue()).getPrimaryKey());
+                                else
+                                    connections[j] = (Connection) ((Connection[]) fields.get(i).getValue())[j].getPrimaryKey();
                         }
                         fields.get(i).setValue(connections);
                     } else {
@@ -80,6 +88,9 @@ import static java.util.Arrays.fill;
                         for (int j = 0; j < size; j++) {
                             device = (Device) iterator.next();
                             if (device != null)
+                                if (fields.get(i).getValue() instanceof Unique.PrimaryKey)
+                                    devices.add((Device) copyPK(((Unique)fields.get(i).getValue()).getPrimaryKey()));
+                                else
                                  devices.add(device.getPrimaryKey());
                             else
                                 devices.add(null);
@@ -88,17 +99,28 @@ import static java.util.Arrays.fill;
                     }
                 }
             }
-            ((FeelableEntity) element).fillAllFields(fields);
+            FeelableEntity entity = com.netcracker.edu.inventory.service.impl.Utilities.createDevice_Connection(element.getClass());
+            entity.fillAllFields(fields);
+            return (Unique<T>) entity;
         }
 
         if (Rack.class.isAssignableFrom(element.getClass())){
             for (int i = 0; i < ((Rack)element).getSize(); i++) {
                 Device d = ((Rack)element).getDevAtSlot(i);
-                if (d != null)
+                if (d != null){
+                    ((Rack)element).removeDevFromSlot(i);
                     ((Rack)element).insertDevToSlot((Device)getIndependentCopy(d), i);
+                 }
             }
-
+            return element;
         }
-        return element;
+        return null;
+    }
+
+    Unique.PrimaryKey copyPK(Unique.PrimaryKey pK){
+        if (pK instanceof DevicePrimaryKey)
+            return new DevicePK(((DevicePK)pK).getIn());
+        else
+            return new ConnectionPK(((ConnectionPK)pK).getTrunk(), ((ConnectionPK)pK).getSerialNumber());
     }
 }

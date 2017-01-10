@@ -9,7 +9,7 @@ import static java.util.Arrays.fill;
 /**
  * Created by barmin on 11.11.2016.
  */
- class Utilities {
+ public class Utilities {
      void sortByIN(Device[] devices)  {
         boolean flag = true;
         int counter = 0;
@@ -78,7 +78,7 @@ import static java.util.Arrays.fill;
         }
     }
 
-    static FeelableEntity createDevice_Connection(Class clazz){
+    public static FeelableEntity createDevice_Connection(Class clazz){
 
         if (clazz.equals(Router.class))
            return new Router();

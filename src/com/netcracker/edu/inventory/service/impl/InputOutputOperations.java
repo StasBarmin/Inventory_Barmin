@@ -354,7 +354,7 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
         if (writer == null) {
             missingOutputStream();
         }
-        
+
         FeelableEntity copyPK = (FeelableEntity) service.getIndependentCopy((Unique) entity);
         List<Field> fields = copyPK.getAllFieldsList();
         StringBuilder resStr = new StringBuilder();
