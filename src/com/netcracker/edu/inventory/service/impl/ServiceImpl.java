@@ -52,56 +52,36 @@ import static java.util.Arrays.fill;
     public <T extends Unique.PrimaryKey> Unique<T> getIndependentCopy(Unique<T> element) {
         if (FeelableEntity.class.isAssignableFrom(element.getClass())){
             List<FeelableEntity.Field> fields = ((FeelableEntity)element).getAllFieldsList();
-            Collection<Device> devices;
-            Connection [] connections;
+            Collection<FeelableEntity> entities;
             Iterator iterator;
-            Device device;
+            FeelableEntity entity;
 
             for (int i = 0; i < fields.size(); i++) {
                 if (Unique.class.isAssignableFrom(fields.get(i).getType())){
                     if (fields.get(i).getValue() != null)
-                        if (fields.get(i).getValue() instanceof Unique.PrimaryKey)
-                            fields.get(i).setValue(copyPK(((Unique)fields.get(i).getValue()).getPrimaryKey()));
-                        else
-                            fields.get(i).setValue(((Unique)fields.get(i).getValue()).getPrimaryKey());
+                        fields.get(i).setValue(((Unique)fields.get(i).getValue()).getPrimaryKey());
                 }
                 if (Collection.class.isAssignableFrom(fields.get(i).getType())) {
                     int size;
-                    if (Switch.class.isAssignableFrom(element.getClass())) {
-                        size = ((Connection[]) fields.get(i).getValue()).length;
-                        connections = new Connection[size];
-                        for (int j = 0; j < size; j++) {
-                            if(((Connection[]) fields.get(i).getValue())[j] != null)
-                                if (fields.get(i).getValue() instanceof Unique.PrimaryKey)
-                                    connections[j] = (Connection)copyPK(((Unique)fields.get(i).getValue()).getPrimaryKey());
-                                else
-                                    connections[j] = (Connection) ((Connection[]) fields.get(i).getValue())[j].getPrimaryKey();
-                        }
-                        fields.get(i).setValue(connections);
-                    } else {
                         size = ((Collection) fields.get(i).getValue()).size();
                         iterator = ((Collection) fields.get(i).getValue()).iterator();
-                        if (Wireless.class.isAssignableFrom(element.getClass()))
-                            devices = new LinkedList<Device>();
+                        if (List.class.isAssignableFrom(fields.get(i).getType()))
+                            entities = new LinkedList<FeelableEntity>();
                         else
-                            devices = new HashSet<Device>();
+                            entities = new HashSet<FeelableEntity>();
                         for (int j = 0; j < size; j++) {
-                            device = (Device) iterator.next();
-                            if (device != null)
-                                if (fields.get(i).getValue() instanceof Unique.PrimaryKey)
-                                    devices.add((Device) copyPK(((Unique)fields.get(i).getValue()).getPrimaryKey()));
-                                else
-                                 devices.add(device.getPrimaryKey());
+                            entity = (FeelableEntity) iterator.next();
+                            if (entity != null)
+                                entities.add((FeelableEntity)((Unique)entity).getPrimaryKey());
                             else
-                                devices.add(null);
+                                entities.add(null);
                         }
-                        fields.get(i).setValue(devices);
-                    }
+                        fields.get(i).setValue(entities);
                 }
             }
-            FeelableEntity entity = com.netcracker.edu.inventory.service.impl.Utilities.createDevice_Connection(element.getClass());
-            entity.fillAllFields(fields);
-            return (Unique<T>) entity;
+            FeelableEntity entity2 = com.netcracker.edu.inventory.service.impl.Utilities.createDevice_Connection(element.getClass());
+            entity2.fillAllFields(fields);
+            return (Unique<T>) entity2;
         }
 
         if (Rack.class.isAssignableFrom(element.getClass())){
@@ -117,10 +97,4 @@ import static java.util.Arrays.fill;
         return null;
     }
 
-    Unique.PrimaryKey copyPK(Unique.PrimaryKey pK){
-        if (pK instanceof DevicePrimaryKey)
-            return new DevicePK(((DevicePK)pK).getIn());
-        else
-            return new ConnectionPK(((ConnectionPK)pK).getTrunk(), ((ConnectionPK)pK).getSerialNumber());
-    }
 }

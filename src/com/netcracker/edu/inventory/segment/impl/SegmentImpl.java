@@ -86,50 +86,39 @@ public class SegmentImpl implements Segment {
         for (Unique element : segment) {
             entity = get(element.getPrimaryKey());
             List<FeelableEntity.Field> fields = ((FeelableEntity)entity).getAllFieldsList();
-            Collection<Device> devices;
-            Connection[] connections;
+            Collection<FeelableEntity> entities;
             Iterator iterator;
-            Device device;
+            Unique.PrimaryKey entity2;
 
             for (int i = 0; i < fields.size(); i++) {
                 if (Unique.class.isAssignableFrom(fields.get(i).getType())){
                     if (fields.get(i).getValue() != null)
-                        if (fields.get(i).getValue() instanceof Unique.PrimaryKey)
-                            if (contain((Unique.PrimaryKey)fields.get(i).getValue()))
+                        if (contain((Unique.PrimaryKey)fields.get(i).getValue()))
                             fields.get(i).setValue(get(((Unique)fields.get(i).getValue()).getPrimaryKey()));
                 }
                 if (Collection.class.isAssignableFrom(fields.get(i).getType())) {
                     int size;
-                    if (Switch.class.isAssignableFrom(entity.getClass())) {
-                        size = ((Connection[]) fields.get(i).getValue()).length;
-                        connections = new Connection[size];
-                        for (int j = 0; j < size; j++) {
-                            if(((Connection[]) fields.get(i).getValue())[j] != null)
-                                if (fields.get(i).getValue() instanceof Unique.PrimaryKey)
-                                    if (contain((Unique.PrimaryKey)fields.get(i).getValue()))
-                                        connections[j] = (Connection)get(((Unique)fields.get(i).getValue()).getPrimaryKey());
-                        }
-                        fields.get(i).setValue(connections);
-                    } else {
                         size = ((Collection) fields.get(i).getValue()).size();
                         iterator = ((Collection) fields.get(i).getValue()).iterator();
-                        if (Wireless.class.isAssignableFrom(entity.getClass()))
-                            devices = new LinkedList<Device>();
+                        if (List.class.isAssignableFrom(fields.get(i).getType()))
+                            entities = new LinkedList<FeelableEntity>();
                         else
-                            devices = new HashSet<Device>();
+                            entities = new HashSet<FeelableEntity>();
                         for (int j = 0; j < size; j++) {
-                            device = (Device) iterator.next();
-                            if (device != null)
-                                if (fields.get(i).getValue() instanceof Unique.PrimaryKey)
-                                    if (contain((Unique.PrimaryKey)fields.get(i).getValue()))
-                                    devices.add((Device) get(((Unique)fields.get(i).getValue()).getPrimaryKey()));
+                            entity2 = (Unique.PrimaryKey) iterator.next();
+                            if (entity2 != null) {
+                                if (contain(entity2))
+                                    entities.add((FeelableEntity) get((entity2)));
+                                else
+                                    entities.add((FeelableEntity) entity2);
+                            }
                             else
-                                devices.add(null);
+                                entities.add(null);
                         }
-                        fields.get(i).setValue(devices);
+                        fields.get(i).setValue(entities);
                     }
-                }
             }
+            ((FeelableEntity) entity).fillAllFields(fields);
             graph.add(entity);
         }
         return graph;

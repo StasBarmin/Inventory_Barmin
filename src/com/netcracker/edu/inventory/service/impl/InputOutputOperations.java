@@ -387,22 +387,6 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
                 } else if (Collection.class.isAssignableFrom(fields.get(i).getType())) {
                     writer.write(resStr.toString());
                     resStr = new StringBuilder();
-                    if (Switch.class.isAssignableFrom(copyPK.getClass())) {
-                        Connection[] connections = (Connection[]) fields.get(i).getValue();
-                        resStr.append(connections.length);
-                        writer.write(resStr.toString());
-                        writer.write(" |\n");
-                        for (int j = 0; j < connections.length; j++) {
-                            Connection connection1 = connections[j];
-                            if (connection1 != null)
-                                writePK(writer, (Unique.PrimaryKey)connections[j]);
-                            else
-                                writer.write(" |");
-                            if (j == connections.length - 1)
-                                writer.write(" ");
-                        }
-                    }
-                    else {
                         resStr.append(((Collection) fields.get(i).getValue()).size());
                         writer.write(resStr.toString());
                         writer.write(" |\n");
@@ -417,7 +401,6 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
                             if (j == ((Collection) fields.get(i).getValue()).size() - 1)
                                 writer.write(" ");
                         }
-                    }
                     writer.write("\n");
                     resStr = new StringBuilder();
                 } else if (Trunk.class.equals(fields.get(i).getType())){
@@ -483,28 +466,17 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
                     temp = readString(reader);
                     strTok = new StringTokenizer(temp, "|");
                     StringTokenizer stringTokenizer = new StringTokenizer(strTok.nextToken());
-                    if (Switch.class.isAssignableFrom(entity.getClass())) {
-                        Connection[] connections = new Connection[size];
-                        for (int j = 0; j < size; j++) {
-                            Connection connection1 = (ConnectionPK) readPK(stringTokenizer);
-                            connections[j] = connection1;
-                            stringTokenizer = new StringTokenizer(strTok.nextToken());
-                        }
-                        fields.get(i).setValue(connections);
-                    }
-                    else {
-                        Collection<Device> collection;
+                        Collection<FeelableEntity> collection;
                         if (List.class.isAssignableFrom(fields.get(i).getType()))
-                            collection = new ArrayList<Device>(size);
+                            collection = new ArrayList<FeelableEntity>(size);
                         else
-                            collection = new HashSet<Device>(size);
+                            collection = new HashSet<FeelableEntity>(size);
                         for (int j = 0; j < size; j++) {
-                            collection.add((DevicePK)readPK(stringTokenizer));
+                            collection.add((FeelableEntity) readPK(stringTokenizer));
                             stringTokenizer = new StringTokenizer(strTok.nextToken());
                         }
                         fields.get(i).setValue(collection);
                     }
-                }
             } else if (Trunk.class.equals(fields.get(i).getType())){
                 if (!temp.equals(" ")){
                     StringTokenizer stringTokenizer = new StringTokenizer(temp);
@@ -545,18 +517,6 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
             else if (FeelableEntity.class.isAssignableFrom(fields.get(i).getType()))
                 outputPK (outputStream, (Unique.PrimaryKey)fields.get(i).getValue());
             else if (Collection.class.isAssignableFrom(fields.get(i).getType())) {
-                if (Switch.class.isAssignableFrom(copyPK.getClass())) {
-                    Connection[] connections = (Connection[]) fields.get(i).getValue();
-                    dataOutput.writeInt(connections.length);
-                    for (int j = 0; j < connections.length; j++) {
-                        Connection connection1 = connections[j];
-                        if (connection1 != null)
-                            outputPK(outputStream,(Unique.PrimaryKey) connection1);
-                        else
-                            dataOutput.writeUTF("\n");
-                    }
-                }
-                else {
                     dataOutput.writeInt(((Collection) fields.get(i).getValue()).size());
                     Iterator iterator = ((Collection) fields.get(i).getValue()).iterator();
                     Unique.PrimaryKey collectionPK;
@@ -567,7 +527,6 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
                         else
                             dataOutput.writeUTF("\n");
                     }
-                }
             }
             else if (Trunk.class.equals(fields.get(i).getType()))
                 locServImpl.outputTrunk((Trunk) fields.get(i).getValue(), outputStream);
@@ -614,25 +573,15 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
                 fields.get(i).setValue(inputPK(inputStream));
             } else if (Collection.class.isAssignableFrom(fields.get(i).getType())) {
                 int size = dataInput.readInt();
-                if (Switch.class.isAssignableFrom(entity.getClass())) {
-                    Connection[] connections = new Connection[size];
-                    for (int j = 0; j < size; j++) {
-                        Connection connection1 = (ConnectionPK)inputPK(inputStream);
-                        connections[j] = connection1;
-                    }
-                    fields.get(i).setValue(connections);
-                }
-                else {
                     Collection collection;
                     if (List.class.isAssignableFrom(fields.get(i).getType()))
-                        collection = new ArrayList<Device>(size);
+                        collection = new ArrayList<FeelableEntity>(size);
                     else
                         collection = new HashSet<Device>(size);
                     for (int j = 0; j < size; j++) {
                         collection.add(inputPK(inputStream));
                     }
                     fields.get(i).setValue(collection);
-                }
             }else if (Trunk.class.equals(fields.get(i).getType()))
                 fields.get(i).setValue(locServImpl.inputTrunk(inputStream));
             else {
