@@ -93,9 +93,7 @@ public class DevicePK implements DevicePrimaryKey {
             throw e;
         }
         if (!DevicePK.class.isInstance(o)){
-            ClassCastException e = new ClassCastException();
-            LOGGER.log(Level.SEVERE, "Argument is not an instance of Device. Method compareTo", e);
-            throw e;
+            return -1;
         }
 
         if (((DevicePK)o).getIn() < in)

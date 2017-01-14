@@ -82,9 +82,7 @@ public class ConnectionPK implements ConnectionPrimaryKey {
             throw e;
         }
         if (!Connection.class.isInstance(o)){
-            ClassCastException e = new ClassCastException();
-            LOGGER.log(Level.SEVERE, "Argument is not an instance of Connection. Method compareTo", e);
-            throw e;
+            return 1;
         }
 
         if (((Connection)o).getSerialNumber() < serialNumber)

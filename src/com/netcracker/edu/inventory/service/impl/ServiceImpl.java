@@ -50,6 +50,8 @@ import static java.util.Arrays.fill;
     }
 
     public <T extends Unique.PrimaryKey> Unique<T> getIndependentCopy(Unique<T> element) {
+        if (element == null)
+            return null;
         if (FeelableEntity.class.isAssignableFrom(element.getClass())){
             List<FeelableEntity.Field> fields = ((FeelableEntity)element).getAllFieldsList();
             Collection<FeelableEntity> entities;

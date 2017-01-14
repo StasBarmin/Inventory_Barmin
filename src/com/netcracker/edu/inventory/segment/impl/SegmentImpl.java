@@ -1,8 +1,6 @@
 package com.netcracker.edu.inventory.segment.impl;
 
 import com.netcracker.edu.inventory.model.*;
-import com.netcracker.edu.inventory.model.impl.Switch;
-import com.netcracker.edu.inventory.model.impl.Wireless;
 import com.netcracker.edu.inventory.segment.Segment;
 import com.netcracker.edu.inventory.service.Service;
 import com.netcracker.edu.inventory.service.impl.ServiceImpl;
@@ -14,7 +12,7 @@ import java.util.*;
  */
 public class SegmentImpl implements Segment {
 
-    List<Unique> segment = new ArrayList<Unique>();
+    Map<Unique.PrimaryKey, Unique> segment = new TreeMap<Unique.PrimaryKey, Unique>();
     Service service = new ServiceImpl();
 
     public boolean add(Unique element) {
@@ -24,7 +22,7 @@ public class SegmentImpl implements Segment {
         if (contain(pK) || pK == null || element instanceof Unique.PrimaryKey || element instanceof Rack)
             return false;
         Unique entity = service.getIndependentCopy(element);
-        segment.add(entity);
+        segment.put(entity.getPrimaryKey(), entity);
         return true;
     }
 
@@ -32,24 +30,13 @@ public class SegmentImpl implements Segment {
         if (element == null)
             return false;
         if (!contain(element.getPrimaryKey()) || element instanceof Unique.PrimaryKey)
-         return false;
-        for (Unique el : segment) {
-            if (element.getPrimaryKey().equals(el.getPrimaryKey()))
-                ((FeelableEntity)el).fillAllFields(((FeelableEntity)element).getAllFieldsList());
-        }
+            return false;
+        ((FeelableEntity)segment.get(element.getPrimaryKey())).fillAllFields(((FeelableEntity)element).getAllFieldsList());
         return true;
     }
 
     public Unique get(Unique.PrimaryKey pk) {
-        if (!contain(pk))
-            return null;
-        else {
-            for (Unique element : segment) {
-                if (element.getPrimaryKey().equals(pk))
-                    return service.getIndependentCopy(element);
-            }
-        }
-        return null;
+        return service.getIndependentCopy(segment.get(pk));
     }
 
     public boolean put(Unique element) {
@@ -60,30 +47,24 @@ public class SegmentImpl implements Segment {
             return false;
         if (!contain(pK)){
             Unique entity = service.getIndependentCopy(element);
-            segment.add(entity);
+            segment.put(entity.getPrimaryKey(), entity);
         }
-        else {
-            for (Unique el : segment) {
-                if (element.getPrimaryKey().equals(el.getPrimaryKey())){
-                    ((FeelableEntity)el).fillAllFields(((FeelableEntity)element).getAllFieldsList());
-                }
-            }
-        }
+        else
+            ((FeelableEntity)segment.get(element.getPrimaryKey())).fillAllFields(((FeelableEntity)element).getAllFieldsList());
         return true;
     }
 
     public boolean contain(Unique.PrimaryKey pk) {
-        for (Unique element : segment) {
-            if (element.getPrimaryKey().equals(pk))
-                return true;
-        }
-        return false;
+        if (pk == null)
+            return false;
+        else
+            return segment.containsKey(pk);
     }
 
     public Collection<Unique> getGraph() {
         List graph = new ArrayList();
         Unique entity;
-        for (Unique element : segment) {
+        for (Unique element : segment.values()) {
             entity = get(element.getPrimaryKey());
             List<FeelableEntity.Field> fields = ((FeelableEntity)entity).getAllFieldsList();
             Collection<FeelableEntity> entities;
