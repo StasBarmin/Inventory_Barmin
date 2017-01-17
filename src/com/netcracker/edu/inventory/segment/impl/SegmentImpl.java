@@ -31,7 +31,8 @@ public class SegmentImpl implements Segment {
             return false;
         if (!contain(element.getPrimaryKey()) || element instanceof Unique.PrimaryKey)
             return false;
-        ((FeelableEntity)segment.get(element.getPrimaryKey())).fillAllFields(((FeelableEntity)element).getAllFieldsList());
+        Unique entity = service.getIndependentCopy(element);
+        ((FeelableEntity) segment.get(element.getPrimaryKey())).fillAllFields(((FeelableEntity)entity).getAllFieldsList());
         return true;
     }
 
@@ -45,12 +46,11 @@ public class SegmentImpl implements Segment {
         Unique.PrimaryKey pK = element.getPrimaryKey();
         if (pK == null || element instanceof Unique.PrimaryKey || element instanceof Rack)
             return false;
-        if (!contain(pK)){
-            Unique entity = service.getIndependentCopy(element);
+        Unique entity = service.getIndependentCopy(element);
+        if (!contain(pK))
             segment.put(entity.getPrimaryKey(), entity);
-        }
         else
-            ((FeelableEntity)segment.get(element.getPrimaryKey())).fillAllFields(((FeelableEntity)element).getAllFieldsList());
+            ((FeelableEntity)segment.get(element.getPrimaryKey())).fillAllFields(((FeelableEntity)entity).getAllFieldsList());
         return true;
     }
 
@@ -62,46 +62,60 @@ public class SegmentImpl implements Segment {
     }
 
     public Collection<Unique> getGraph() {
-        List graph = new ArrayList();
+        List<Unique> graph = new ArrayList<Unique>();
         Unique entity;
         for (Unique element : segment.values()) {
             entity = get(element.getPrimaryKey());
-            List<FeelableEntity.Field> fields = ((FeelableEntity)entity).getAllFieldsList();
+            graph.add(entity);
+        }
+        for (Unique element : graph) {
+            List<FeelableEntity.Field> fields = ((FeelableEntity) element).getAllFieldsList();
             Collection<FeelableEntity> entities;
             Iterator iterator;
             Unique.PrimaryKey entity2;
+            Unique match = null;
 
             for (int i = 0; i < fields.size(); i++) {
-                if (Unique.class.isAssignableFrom(fields.get(i).getType())){
+                if (Unique.class.isAssignableFrom(fields.get(i).getType())) {
                     if (fields.get(i).getValue() != null)
-                        if (contain((Unique.PrimaryKey)fields.get(i).getValue()))
-                            fields.get(i).setValue(get(((Unique)fields.get(i).getValue()).getPrimaryKey()));
+                        match = findInGraph((Unique.PrimaryKey) fields.get(i).getValue(), graph);
+                        if (match != null)
+                            fields.get(i).setValue(match);
                 }
                 if (Collection.class.isAssignableFrom(fields.get(i).getType())) {
                     int size;
-                        size = ((Collection) fields.get(i).getValue()).size();
-                        iterator = ((Collection) fields.get(i).getValue()).iterator();
-                        if (List.class.isAssignableFrom(fields.get(i).getType()))
-                            entities = new LinkedList<FeelableEntity>();
-                        else
-                            entities = new HashSet<FeelableEntity>();
-                        for (int j = 0; j < size; j++) {
-                            entity2 = (Unique.PrimaryKey) iterator.next();
-                            if (entity2 != null) {
-                                if (contain(entity2))
-                                    entities.add((FeelableEntity) get((entity2)));
-                                else
-                                    entities.add((FeelableEntity) entity2);
-                            }
+                    size = ((Collection) fields.get(i).getValue()).size();
+                    iterator = ((Collection) fields.get(i).getValue()).iterator();
+                    if (List.class.isAssignableFrom(fields.get(i).getType()))
+                        entities = new LinkedList<FeelableEntity>();
+                    else
+                        entities = new HashSet<FeelableEntity>();
+                    for (int j = 0; j < size; j++) {
+                        entity2 = (Unique.PrimaryKey) iterator.next();
+                        if (entity2 != null) {
+                            match = findInGraph(entity2, graph);
+                            if (match != null)
+                                entities.add((FeelableEntity) match);
                             else
-                                entities.add(null);
-                        }
-                        fields.get(i).setValue(entities);
+                                entities.add((FeelableEntity) entity2);
+                        } else
+                            entities.add(null);
                     }
+                    fields.get(i).setValue(entities);
+                }
             }
-            ((FeelableEntity) entity).fillAllFields(fields);
-            graph.add(entity);
+            ((FeelableEntity) element).fillAllFields(fields);
         }
         return graph;
     }
+
+    Unique findInGraph(Unique.PrimaryKey pK, Collection<Unique> graph){
+        for (Unique element : graph){
+            if (element.getPrimaryKey().equals(pK))
+                return element;
+        }
+        return null;
+    }
 }
+
+
