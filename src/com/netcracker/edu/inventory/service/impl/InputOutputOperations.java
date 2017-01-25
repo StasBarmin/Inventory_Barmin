@@ -117,10 +117,11 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
         resStr.append(rack.getSize());
         resStr.append(" ");
         resStr.append(rack.getTypeOfDevices().getCanonicalName());
-        resStr.append("\n\n\n");
+        resStr.append("\n");
+        writer.write(resStr.toString());
 
         locServImpl.writeLocation(rack.getLocation(), writer);
-        writer.write(resStr.toString());
+        writer.write("\n\n");
 
         for (int i = 0; i < rack.getSize(); i++) {
             Device d = rack.getDevAtSlot(i);
@@ -137,8 +138,12 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
             missingInputStream();
         }
 
-        Location location = locServImpl.readLocation(reader);
         String firstStr = readString(reader);
+        if (firstStr.equals(""))
+            return null;
+
+        Location location = locServImpl.readLocation(reader);
+
         StringTokenizer sT = new StringTokenizer(firstStr);
 
         int size = Integer.parseInt(sT.nextToken());
@@ -176,8 +181,8 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
         DeviceServiceImpl dsi = new DeviceServiceImpl();
         DataOutput dataOutput = new DataOutputStream(outputStream);
 
-        locServImpl.outputLocation(rack.getLocation(), outputStream);
         dataOutput.writeInt(rack.getSize());
+        locServImpl.outputLocation(rack.getLocation(), outputStream);
         dataOutput.writeUTF(rack.getTypeOfDevices().getCanonicalName());
 
         for (int i = 0; i < rack.getSize(); i++) {
@@ -195,8 +200,10 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
         }
         DataInput dataInput = new DataInputStream(inputStream);
 
-        Location location = locServImpl.inputLocation(inputStream);
         int size = dataInput.readInt();
+        if (size == -1)
+            return null;
+        Location location = locServImpl.inputLocation(inputStream);
         String s = dataInput.readUTF();
 
         Class c = classFromStream(s);
@@ -410,7 +417,7 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
                 }
                 else
                     resStr.append(fields.get(i).getValue());
-                if (fields.get(i).getType() != List.class && fields.get(i).getType() != Trunk.class && !FeelableEntity.class.isAssignableFrom(fields.get(i).getType()))
+                if (!Collection.class.isAssignableFrom(fields.get(i).getType()) && fields.get(i).getType() != Trunk.class && !FeelableEntity.class.isAssignableFrom(fields.get(i).getType()))
                     if (i == fields.size() - 1)
                         resStr.append(" |\n");
                     else
@@ -465,7 +472,9 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
                     int size = Integer.parseInt(temp.substring(1, temp.length() - 1));
                     temp = readString(reader);
                     strTok = new StringTokenizer(temp, "|");
-                    StringTokenizer stringTokenizer = new StringTokenizer(strTok.nextToken());
+                    StringTokenizer stringTokenizer = null;
+                    if (size > 0)
+                     stringTokenizer = new StringTokenizer(strTok.nextToken());
                         Collection<FeelableEntity> collection;
                         if (List.class.isAssignableFrom(fields.get(i).getType()))
                             collection = new ArrayList<FeelableEntity>(size);
@@ -543,6 +552,7 @@ import static com.netcracker.edu.inventory.model.FeelableEntity.*;
 
         DataInput dataInput = new DataInputStream(inputStream);
         Class classFromStream;
+
         String s = dataInput.readUTF();
 
         if (s.equals("\n"))
