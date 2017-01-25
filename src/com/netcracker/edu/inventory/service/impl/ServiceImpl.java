@@ -5,10 +5,7 @@ import com.netcracker.edu.inventory.model.impl.ConnectionPK;
 import com.netcracker.edu.inventory.model.impl.DevicePK;
 import com.netcracker.edu.inventory.model.impl.Switch;
 import com.netcracker.edu.inventory.model.impl.Wireless;
-import com.netcracker.edu.inventory.service.ConnectionService;
-import com.netcracker.edu.inventory.service.DeviceService;
-import com.netcracker.edu.inventory.service.RackService;
-import com.netcracker.edu.inventory.service.Service;
+import com.netcracker.edu.inventory.service.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
@@ -39,6 +36,17 @@ import static java.util.Arrays.fill;
     public RackService getRackService(){
         RackService rs = new RackServiceImpl();
         return rs;
+    }
+
+    public ConcurrentIOService getConcurrentIOService(){
+        ConcurrentIOService concurrentIOService = new ConcurentIOServiceImpl();
+        return concurrentIOService;
+    }
+
+    public RDBService getRDBService(){
+        NotImplementedException e = new NotImplementedException();
+        LOGGER.log(Level.SEVERE, "Method getRDBService is not implemented", e);
+        throw e;
     }
 
     public void sortByIN(Device[] devices)  {

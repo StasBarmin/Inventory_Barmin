@@ -31,6 +31,20 @@ public interface Service {
     ConnectionService getConnectionService();
 
     /**
+     * Return RDBService implementation
+     *
+     * @return implementation of RDBService interface
+     */
+    RDBService getRDBService();
+
+    /**
+     * Return ConcurrentIOService implementation
+     *
+     * @return implementation of ConcurrentIOService interface
+     */
+    ConcurrentIOService getConcurrentIOService();
+
+    /**
      * Sort array of Device-s by identification number.
      *
      * @param devices - array of Device-s, that need to be sorted
