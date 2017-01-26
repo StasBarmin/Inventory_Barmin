@@ -1,10 +1,6 @@
 package com.netcracker.edu.inventory.service.impl;
 
 import com.netcracker.edu.inventory.model.*;
-import com.netcracker.edu.inventory.model.impl.ConnectionPK;
-import com.netcracker.edu.inventory.model.impl.DevicePK;
-import com.netcracker.edu.inventory.model.impl.Switch;
-import com.netcracker.edu.inventory.model.impl.Wireless;
 import com.netcracker.edu.inventory.service.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -39,7 +35,7 @@ import static java.util.Arrays.fill;
     }
 
     public ConcurrentIOService getConcurrentIOService(){
-        ConcurrentIOService concurrentIOService = new ConcurentIOServiceImpl();
+        ConcurrentIOService concurrentIOService = new ConcurrentIOServiceImpl();
         return concurrentIOService;
     }
 

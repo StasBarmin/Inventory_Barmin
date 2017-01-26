@@ -16,7 +16,7 @@ import java.util.concurrent.Future;
 /**
  * Created by barmin on 20.01.2017.
  */
-public class ConcurentIOServiceImpl implements ConcurrentIOService {
+public class ConcurrentIOServiceImpl implements ConcurrentIOService {
     ExecutorService executorService = Executors.newFixedThreadPool(8);
     ConcurrentInputOtputOperations iO = new ConcurrentInputOtputOperations();
 

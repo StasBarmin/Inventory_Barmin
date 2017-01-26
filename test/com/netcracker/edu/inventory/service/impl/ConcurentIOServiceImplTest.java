@@ -28,7 +28,7 @@ public class ConcurentIOServiceImplTest {
     private static final int PIPED_BUFER_SIZE = 1024*4;
     private static final String TEXT_FILE_NAME = "concurrentOut.txt";
 
-    protected ConcurrentIOService service = new ConcurentIOServiceImpl();
+    protected ConcurrentIOService service = new ConcurrentIOServiceImpl();
     protected PipedOutputStream pipedOutputStream;
     protected PipedInputStream pipedInputStream;
     protected PipedWriter pipedWriter;
